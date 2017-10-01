@@ -1,64 +1,56 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import 'jquery-csv'
-import { unique } from './util.js'
+
+import { asc } from './util.js'
+
 
 Vue.use(Vuex)
 
-export const store =  new Vuex.Store({
+export const store = new Vuex.Store({
   state: {
     lang: 'de',
-    topic: {
-      all: [],
-      selected: []
-    },
-    canton: {
-      all: [],
-      selected: ['BE','ZH']
-    },
-    head: {
-      all: [],
-      selected: []
-    }
+    topic: { list: [], data: {} },
+    institution: { list: [], data: {} },
+    canton: { list: [], data: {} },
+    head: { list: [], data: {} },
+    group: { list: [], data: {} },
   },
   mutations: {
-    updateTopic(state, data){
-      Vue.set(state.topic, data.type, data.data)
+
+    setData(state, data){
+      for(let d in data.data){
+        const r = data.data[d]
+        Vue.set(state[data.list].data, r.id, r)
+        state[data.list].list.push(r.id)
+      }
     },
-    updateCanton(state, data){
-      Vue.set(state.canton, data.type, data.data)
+
+    updateData(state, data){
+      if(!data.replace) data.data = $.extend(true, {}, state[data.list].data[data.id], data.data)
+      Vue.set(state[data.list].data, data.id, data.data)
+    }
+  },
+  getters: {
+    topics({topic}){
+      return topic.list.map(id => topic.data[id]).sort(asc)
     },
-    updateHead(state, data){
-      Vue.set(state.head, data.type, data.data)
+    institutions({institution}){
+      return institution.list.map(id => institution.data[id]).sort(asc)
+    },
+    cantons({canton}){
+      return canton.list.map(id => canton.data[id]).sort(asc)
+    },
+    heads({head}){
+      return head.list.map(id => head.data[id]).sort(asc)
+    },
+    groups({group}){
+      return group.list.map(id => group.data[id])
+    },
+    selected(state, getters){
+      return (getter) => {
+
+        return getters[getter].filter((v) => v.selected )
+      }
     }
   }
-})
-
-
-$.ajax({
-  method: 'GET',
-  url: './data/bafu_umwelt_fgrps_db.csv',
-}).done(function(data) {
-  const database = $.csv.toObjects(data)
-
-  const cantonArray = []
-  const headArray = []
-  const topicArray = []
-
-  for(let i = 0; i < database.length; i++){
-    const r = database[i]
-    cantonArray.push({ name: r.canton, value: r.cantonID })
-    headArray.push({ name: r.group_head, value: r.gid })
-    topicArray.push({ name: r.group_maintopic_de, value: r.group_maintopic_de })
-
-    const allTopics = r.group_alltopics_de.split(', ');
-    for(let j = 0; j < allTopics.length; j++){
-      topicArray.push({ name: allTopics[j], value: allTopics[j] })
-    }
-  }
-
-  store.commit('updateCanton', { type: 'all', data: unique(cantonArray, 'value') })
-  store.commit('updateHead', { type: 'all', data: unique(headArray, 'name') })
-  store.commit('updateTopic', { type: 'all', data: unique(topicArray, 'value') })
-
 })

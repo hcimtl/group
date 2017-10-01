@@ -2,18 +2,15 @@
   <div class="field">
     <label><i v-bind:class="[icon, 'icon']"></i> <span>{{label}}</span></label>
 
-    <div class="ui fluid multiple search selection dropdown" ref="filter">
+    <div :class="[isLoading ? 'loading':'', 'ui fluid multiple search selection dropdown']" ref="filter">
       <input type="hidden" ref="input">
       <i class="dropdown icon"></i>
       <div class="text"></div>
       <div class="menu">
-        <div v-for="option in all" class="item" :data-value="option.value">{{ option.name }}</div>
+        <div v-for="option in data" :class="[option.main ? 'bold' : '', 'item']" :data-value="option.id">{{ option.name }}</div>
       </div>
     </div>
 
-    <!--<select class="ui fluid search dropdown" multiple="" v-model="selected" ref="filter">
-      <option v-for="option in all" :value="option.value">{{ option.name }}</option>
-    </select>-->
   </div>
 </template>
 
@@ -23,22 +20,23 @@
 
   export default {
     name: 'group-filter',
-    props: ['data','label', 'icon', 'update', "fulltext"],
+    props: ['data','label', 'icon', 'fulltext'],
     data: function(){
       return {}
     },
     computed: {
-      all(){
-        return this.data.all
+      isLoading(){
+        return this.data.length < 1
       }
     },
     mounted: function(){
       const opts = {};
       if(this.fulltext) opts.fullTextSearch = true
-      opts.selected
-      opts.onChange =  (value, text, $choice) => {
-        value = value.split(',')
-        this.$store.commit(this.update, { type: 'selected', data: value })
+      opts.onAdd = (value, text, $choice) => {
+        this.$store.commit('updateData', { list: this.label, id: value, data: { selected: true } })
+      },
+      opts.onRemove = (value, text, $choice) => {
+        this.$store.commit('updateData', { list: this.label, id: value, data: { selected: false } })
       }
 
       $(this.$refs.filter).dropdown(opts)
@@ -47,5 +45,7 @@
 </script>
 
 <style lang="less">
-
+  .ui.dropdown .menu>.item.bold {
+    font-weight: 900;
+  }
 </style>
