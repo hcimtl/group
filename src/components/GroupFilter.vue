@@ -7,7 +7,7 @@
       <i class="dropdown icon"></i>
       <div class="text"></div>
       <div class="menu">
-        <div v-for="option in data" :class="[option.main ? 'bold' : '', 'item']" :data-value="option.id">{{ option.name }}</div>
+        <div v-for="option in options" :class="[option.main ? 'bold' : '', 'item']" :data-value="option.id">{{ option.name }}</div>
       </div>
     </div>
 
@@ -18,6 +18,8 @@
   import './../../node_modules/semantic-ui-css/components/transition.min.js'
   import './../../node_modules/semantic-ui-css/components/dropdown.min.js'
 
+  import { asc } from './../util.js'
+
   export default {
     name: 'group-filter',
     props: ['data','label', 'icon', 'fulltext'],
@@ -27,16 +29,17 @@
     computed: {
       isLoading(){
         return this.data.length < 1
+      },
+      options(){
+        return this.data.sort(asc)
       }
     },
     mounted: function(){
       const opts = {};
       if(this.fulltext) opts.fullTextSearch = true
-      opts.onAdd = (value, text, $choice) => {
-        this.$store.commit('updateData', { list: this.label, id: value, data: { selected: true } })
-      },
-      opts.onRemove = (value, text, $choice) => {
-        this.$store.commit('updateData', { list: this.label, id: value, data: { selected: false } })
+      opts.onChange = (value, text, $choice) => {
+        const arr = value ? value.split(',').map((v) => parseInt(v)) : []
+        this.$store.commit('setSelected', { list: this.label,  data: arr })
       }
 
       $(this.$refs.filter).dropdown(opts)

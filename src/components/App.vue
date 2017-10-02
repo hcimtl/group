@@ -15,8 +15,6 @@
     <div class="map-container">
       <group-map></group-map>
     </div>
-
-    <div v-for="test in selectedTopics">{{test.name}}</div>
   </div>
 </template>
 
@@ -28,11 +26,6 @@
     name: 'app',
     data: function(){
       return {}
-    },
-    computed: {
-      selectedTopics(){
-        return this.$store.getters.selected('topics')
-      }
     },
     components: {
       GroupFilter, GroupMap

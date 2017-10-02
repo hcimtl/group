@@ -57,7 +57,7 @@ $.ajax({
 
     const heads = r.group_head.split(/[\ ]*,[\ ]*/)
     for(let h in heads) {
-      const head = heads[h].replace(/(^\ *)|(\ *$)/, '')
+      const head = heads[h].trim()
 
       if(head.length > 0){
         if(!headArray[head]) {
@@ -73,7 +73,7 @@ $.ajax({
     const topics = r.group_alltopics_de.split(/[\ ]*,[\ ]*/)
     topics.pop(r.group_maintopic_de)
     for(let t in topics) {
-      const topic = topics[t].replace(/(^\ *)|(\ *$)/, '')
+      const topic = topics[t].trim()
 
       if(topic.length > 0){
         if(!topicArray[topic]) {
