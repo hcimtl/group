@@ -13,9 +13,15 @@ export const store = new Vuex.Store({
     canton: { list: [], data: {}, selected: [] },
     head: { list: [], data: {}, selected: [] },
     group: { list: [], data: {}, selected: [] },
+    bounds: {
+      ne: [47.933243004813725, 10.575639903386495],
+      sw: [45.639066961601685, 5.883893951813307]
+    }
   },
   mutations: {
-
+    setBounds(state, data){
+      Vue.set(state, 'bounds', data)
+    },
     setData(state, data){
       for(let d in data.data){
         const r = data.data[d]
@@ -52,13 +58,16 @@ export const store = new Vuex.Store({
       const slcI = state.institution.selected
       const slcH = state.head.selected
       const slcT = state.topic.selected
+      const slcB = state.bounds
 
       groups = groups.filter((v) => {
         return  (
           (slcC.length === 0 || slcC.indexOf(v.cantonId) != -1) &&
           (slcI.length === 0 || slcI.indexOf(v.institutionId) != -1) &&
           (slcH.length === 0 || intersect(slcH, v.headIds).length > 0) &&
-          (slcT.length === 0 || intersect(slcT, v.topicIds).length >= slcT.length)
+          (slcT.length === 0 || intersect(slcT, v.topicIds).length >= slcT.length) &&
+          (v.coords.lat <= slcB.ne[0] && v.coords.lat >= slcB.sw[0]) &&
+          (v.coords.lng <= slcB.ne[1] && v.coords.lng >= slcB.sw[1])
         )
       })
 
