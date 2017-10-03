@@ -1,5 +1,6 @@
 import { store } from './store.js'
 import 'jquery-csv'
+import { getHashParams } from './util.js'
 
 $.ajax({
   method: 'GET',
@@ -71,18 +72,30 @@ $.ajax({
     }
 
     const topics = r.group_alltopics_de.split(/[\ ]*,[\ ]*/)
-    topics.pop(r.group_maintopic_de)
+    const topics_fr = r.group_alltopics_fr.split(/[\ ]*,[\ ]*/)
+    const topics_it = r.group_alltopics_it.split(/[\ ]*,[\ ]*/)
+    const topics_en = r.group_alltopics_en.split(/[\ ]*,[\ ]*/)
+
+    topics.unshift(r.group_maintopic_de)
+    topics_fr.unshift(r.group_maintopic_fr)
+    topics_it.unshift(r.group_maintopic_it)
+    topics_en.unshift(r.group_maintopic_en)
+
     for(let t in topics) {
       const topic = topics[t].trim()
+      const topic_fr = topics_fr[t] ? topics_fr[t].trim() : ''
+      const topic_it = topics_it[t] ? topics_it[t].trim() : ''
+      const topic_en = topics_en[t] ? topics_en[t].trim() : ''
 
       if(topic.length > 0){
         if(!topicArray[topic]) {
-          topicArray[topic] = { name: topic, id: topicIndex, main: t == 0 ? true : false }
+          topicArray[topic] = { name_de: topic, name_fr: topic_fr, name_it: topic_it, name_en: topic_en, id: topicIndex, main: t == 0 ? true : false }
           groupArray[i].topicIds.push(topicIndex)
           topicIndex++
         } else {
           groupArray[i].topicIds.push(topicArray[topic].id)
         }
+        if(t == 0) groupArray[i].mainTopicId = topicArray[topic].id
       }
     }
   }
@@ -94,3 +107,28 @@ $.ajax({
   store.commit('setData', { list: 'group', data:  groupArray })
 
 })
+
+loadLanguage()
+store.watch((state, getters) => { return state.language.selected }, (value) => {
+  loadLanguage()
+})
+
+function loadLanguage(){
+  $.ajax({
+    method: 'GET',
+    url: `./data/language.${store.state.language.selected}.json`,
+  }).done(function(data) {
+    store.commit('setLanguageTerms', { data: data })
+  });
+}
+
+loadHash()
+$(window).on('hashchange', function(){
+  loadHash()
+})
+function loadHash(){
+  const params = getHashParams()
+  if(params.lang){
+    store.commit('setLanguage', { data: params.lang })
+  }
+}

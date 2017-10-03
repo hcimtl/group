@@ -15,12 +15,14 @@
     <div class="map-container">
       <group-map></group-map>
     </div>
+    <group-list></group-list>
   </div>
 </template>
 
 <script>
   import GroupFilter from './GroupFilter.vue'
   import GroupMap from './GroupMap.vue'
+  import GroupList from './GroupList.vue'
 
   export default {
     name: 'app',
@@ -28,7 +30,7 @@
       return {}
     },
     components: {
-      GroupFilter, GroupMap
+      GroupFilter, GroupMap, GroupList
     }
   }
 </script>

@@ -36,12 +36,16 @@
         icon: null,
         map: null,
         markers: null,
-        first: true
+        popup: null,
+        watcher: null
       }
     },
     methods: {
       refresh(){
         const start = Date.now()
+
+        const minZoom = this.map.getMinZoom() // to make it work on zoomSnap 0.5
+        this.map.setMinZoom(Math.floor(minZoom))
         this.markers.clearLayers()
 
         const markers = []
@@ -50,37 +54,34 @@
         for(let i = 0; i < l; i++){
           const group = groups[i]
           const marker = L.marker(new L.LatLng(group.coords.lat, group.coords.lng), { icon: this.icon})
-          marker.bindPopup(
-            `<a target="_blank" href="${group.website.replace(/^#/,'')}">${group.name}</a><br>
-            <strong>institution:</strong> ${group.institutionId}<br>
-            <strong>head:</strong> ${group.headIds.join(', ')}<br>
-            <strong>topics:</strong> ${group.topicIds.join(', ')}<br>`
-          )
+          marker.data = group;
+          marker.bindPopup(this.popup);
           markers.push(marker)
         }
-        if(l === 1){
-          this.markers.addLayer(markers[0])
-        } else {
-          this.markers.addLayers(markers)
-        }
-        this.map.addLayer(this.markers)
-        console.log(Date.now() - start)
+
+        this.markers.addLayers(markers)
+        this.map.setMinZoom(minZoom)
+        console.log(Date.now()-start)
       }
     },
+    unmount: function() {
+      this.map = null
+      this.popup = null
+      this.markers = null
+      this.icon = null
+    },
     mounted: function() {
+      const vueObj = this;
+
       this.map = new L.Map(this.$refs.map, {
-        crs: L.CRS.EPSG3857,
         zoomSnap: 0.5
       });
 
       const url = 'https://wmts10.geo.admin.ch/1.0.0/ch.swisstopo.pixelkarte-farbe/default/current/3857/{z}/{x}/{y}.jpeg';
-      const tilelayer = new L.tileLayer(url);
-      tilelayer.getAttribution = function() {
-        return '<a href="https://www.swisstopo.admin.ch/de/home.html" target="_blank"> swisstopo</a>';
-      };
+      const tilelayer = new L.tileLayer(url, {
+        attribution: '<a href="https://www.swisstopo.admin.ch/de/home.html" target="_blank"> swisstopo</a>'
+      });
       this.map.addLayer(tilelayer);
-
-      const b = this.$store.state.bounds
 
       const corner1 = L.latLng(47.933243004813725, 10.575639903386495)
       const corner2 = L.latLng(45.639066961601685, 5.883893951813307)
@@ -93,7 +94,26 @@
         const nb = this.map.getBounds()
         this.$store.commit('setBounds', { ne: [nb._northEast.lat, nb._northEast.lng], sw: [nb._southWest.lat, nb._southWest.lng] })
       })
+      this.map.on('popupopen', () => {
+        this.map.setMaxBounds(null)
+      })
+      this.map.on('popupclose', () => {
+        this.map.setMaxBounds(bounds)
+      })
 
+      this.popup = L.popup({
+        autoClose: false
+      }).setContent(function(){
+        const id = this._source.data.id;
+        const data = vueObj.$store.getters.groupById(id)
+        const term = vueObj.$store.getters.term
+        return (
+          `<strong><a target="_blank" href="${data.website.replace(/^#/,'')}">${data.name}</a></strong><br>
+          <strong>${term("institution")}:</strong> ${data.institution}<br>
+          <strong>${term("head")}:</strong> ${data.heads.join(', ')}<br>
+          <strong>${term("topic")}:</strong> <strong>${data.mainTopic}</strong>, ${data.topics.join(', ')}<br>`
+        )
+      })
 
 
       this.icon = L.divIcon({
@@ -102,7 +122,7 @@
         iconSize: [44, 44],
         popupAnchor: [0, -44],
         html: `<svg class="icon" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-                <circle fill="#ffffff" cx="12" cy="9" r="3" fill-opacity="0.5" />
+                <circle fill="#06284b" cx="12" cy="9" r="3" fill-opacity="0.6" />
                 <path fill="currentColor" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
               </svg>`
       })
@@ -126,11 +146,16 @@
           className: 'map-cluster-bounds'
         }
       })
+      this.map.addLayer(this.markers)
 
-      this.refresh();
-      this.$store.watch((state, getters) => { return getters.groups }, (value) => {
+      this.refresh()
+
+      this.watcher = this.$store.watch((state, getters) => { return getters.groups }, (value) => {
         this.refresh()
       })
+    },
+    destroyed: function(){
+      this.watcher()
     }
   }
 </script>

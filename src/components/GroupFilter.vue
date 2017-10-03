@@ -1,6 +1,6 @@
 <template>
   <div class="field">
-    <label><i v-bind:class="[icon, 'icon']"></i> <span>{{label}}</span></label>
+    <label><i v-bind:class="[icon, 'icon']"></i> <span>{{ title }}</span></label>
 
     <div :class="[isLoading ? 'loading':'', 'ui fluid multiple search selection dropdown']" ref="filter">
       <input type="hidden" ref="input">
@@ -27,6 +27,9 @@
       return {}
     },
     computed: {
+      title(){
+        return this.$store.getters.term(this.label)
+      },
       isLoading(){
         return this.data.length < 1
       },

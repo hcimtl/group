@@ -31,6 +31,18 @@ module.exports = {
           use: ['css-loader', 'less-loader']
         })
       },
+      /*{
+        test: /\.(html|csv|json)$/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              outputPath: '/',
+              name: '[path][name].[ext]'
+            }
+          }
+        ]
+      },*/
       {
         test: /\.(eot|svg|ttf|woff|woff2)$/,
         use: [

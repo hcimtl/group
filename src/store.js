@@ -7,7 +7,10 @@ Vue.use(Vuex)
 
 export const store = new Vuex.Store({
   state: {
-    lang: 'de',
+    language: {
+      selected: 'de',
+      terms: {}
+    },
     topic: { list: [], data: {}, selected: [] },
     institution: { list: [], data: {}, selected: [] },
     canton: { list: [], data: {}, selected: [] },
@@ -19,6 +22,12 @@ export const store = new Vuex.Store({
     }
   },
   mutations: {
+    setLanguage(state, data) {
+      Vue.set(state.language, 'selected', data.data)
+    },
+    setLanguageTerms(state, data){
+      Vue.set(state.language, 'terms', data.data)
+    },
     setBounds(state, data){
       Vue.set(state, 'bounds', data)
     },
@@ -32,16 +41,21 @@ export const store = new Vuex.Store({
 
     setSelected(state, data){
       Vue.set(state[data.list], 'selected', data.data)
-    },
-
-    updateData(state, data){
-      if(!data.replace) data.data = $.extend(true, {}, state[data.list].data[data.id], data.data)
-      Vue.set(state[data.list].data, data.id, data.data)
     }
   },
   getters: {
-    topics({topic}){
-      return topic.list.map(id => topic.data[id])
+    term({language}){
+      return (key, params) => {
+        const term = language.terms[key]
+        return term ? term : '';
+      }
+    },
+    topics(state){
+      return state.topic.list.map(id => {
+        const topic = state.topic.data[id]
+        topic.name = topic['name_'+state.language.selected]
+        return topic
+      })
     },
     institutions({institution}){
       return institution.list.map(id => institution.data[id])
@@ -58,18 +72,60 @@ export const store = new Vuex.Store({
       const slcI = state.institution.selected
       const slcH = state.head.selected
       const slcT = state.topic.selected
-      const slcB = state.bounds
 
       groups = groups.filter((v) => {
         return  (
           (slcC.length === 0 || slcC.indexOf(v.cantonId) != -1) &&
           (slcI.length === 0 || slcI.indexOf(v.institutionId) != -1) &&
           (slcH.length === 0 || intersect(slcH, v.headIds).length > 0) &&
-          (slcT.length === 0 || intersect(slcT, v.topicIds).length >= slcT.length) &&
+          (slcT.length === 0 || intersect(slcT, v.topicIds).length >= slcT.length)
+        )
+      })
+
+      return groups
+    },
+    groupById(state, getters){
+      return (id) => {
+        if(!id) return {}
+        if(!state.group.data[id]) return {}
+        const group = state.group.data[id]
+
+        group.canton = state.canton.data[group.cantonId].name
+        group.institution = state.institution.data[group.institutionId].name
+
+        const topicLength = group.topicIds.length
+        group.topics = []
+        for(let i = 0; i < topicLength; i++){
+          const topic = state.topic.data[group.topicIds[i]]
+          if(topic.id == group.mainTopicId){
+            group.mainTopic = topic.name
+          } else {
+            group.topics.push(topic.name)
+          }
+        }
+
+        const headLength = group.headIds.length
+        group.heads = []
+        for(let i = 0; i < headLength; i++){
+          group.heads.push(state.head.data[group.headIds[i]].name)
+        }
+
+        return group
+      }
+    },
+    groupsForList(state, getters){
+      let groups = getters.groups
+      const slcB = state.bounds
+
+      groups = groups.filter((v) => {
+        return  (
           (v.coords.lat <= slcB.ne[0] && v.coords.lat >= slcB.sw[0]) &&
           (v.coords.lng <= slcB.ne[1] && v.coords.lng >= slcB.sw[1])
         )
       })
+      for(let i = 0; i < groups.length; i++){
+        groups[i] = getters.groupById(groups[i].id)
+      }
 
       return groups
     },
