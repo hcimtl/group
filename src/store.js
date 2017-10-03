@@ -116,6 +116,7 @@ export const store = new Vuex.Store({
     groupsForList(state, getters){
       let groups = getters.groups
       const slcB = state.bounds
+      const lang = state.language.selected
 
       groups = groups.filter((v) => {
         return  (

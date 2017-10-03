@@ -2,5 +2,7 @@
   "topic": "Research Topics",
   "institution": "Institution",
   "canton": "Canton",
-  "head": "Head"
+  "head": "Head",
+  "group": "Group",
+  "sort_by": "Sort by"
 }

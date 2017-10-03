@@ -1,17 +1,36 @@
 <template>
   <div class="list-container">
-    <div v-for="group in groups" class="ui fluid  card">
+    <div class="ui content">
+      {{ term('sort_by') }}: <a @click="sortBy('institution')">{{ term('institution') }}</a> | <a @click="sortBy('group')">{{ term('group') }}</a> | <a @click="sortBy('head')">{{ term('head') }}</a>
+    </div>
+    <div class="ui divider"></div>
+    <div v-for="group in groups" class="ui fluid card">
       <div class="content">
-        <a class="header" target="_blank" :href="group.website.replace('#', '')">{{ group.name }}</a>
-        <div class="description">
-          <strong>{{group.institution}}</strong><br>
-          {{group.institute}}<br>
-          {{term('head')}}: {{group.heads.join(', ')}}<br>
+        <div class="right floated icon">
+          <button class="ui icon mini primary button">
+            <i class="icon location arrow"></i>
+          </button>
         </div>
-      </div>
-      <div class="content">
-        <div class="ui basic label"><strong>{{group.mainTopic}}</strong></div>
-        <div class="ui basic label" v-for="topic in group.topics">{{topic}}</div>
+        <div class="header">
+          <a target="_blank" :href="group.website.replace('#', '')">{{ group.name }}</a>
+        </div>
+        <div class="meta">
+          {{group.heads.join(', ')}}
+        </div>
+        <div class="description">
+          <p>
+            <strong>{{group.institution}}</strong>
+          </p>
+          <p>
+            {{group.departement}}<br>
+            {{group.institute}}
+          </p>
+          <br>
+          <div class="ui labels">
+            <div class="ui black tiny label">{{group.mainTopic}}</div>
+            <div class="ui basic tiny label" v-for="topic in group.topics">{{topic}}</div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -22,7 +41,9 @@
     name: 'group-list',
     props: [],
     data: function(){
-      return {}
+      return {
+        sort: 'institution'
+      }
     },
     computed: {
       groups(){
@@ -32,13 +53,20 @@
     methods: {
       term(term){
         return this.$store.getters.term(term)
+      },
+      sortBy(term){
+        this.sort = term
       }
-    },
-    mounted: function(){
     }
   }
 </script>
 
 <style lang="less">
-
+  .ui.fluid.card {
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    padding-bottom: 0.9em;
+    border-bottom: 1px solid rgba(34,36,38,.15);
+  }
 </style>

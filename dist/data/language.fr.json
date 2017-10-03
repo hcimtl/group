@@ -2,5 +2,7 @@
   "topic": "Thèmes de recherche",
   "institution": "Institution de recherche",
   "canton": "Canton",
-  "head": "Chef/Cheffe"
+  "head": "Chef/Cheffe",
+  "group": "Groupe",
+  "sort_by": "Classification par"
 }

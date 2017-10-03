@@ -161,62 +161,64 @@
 </script>
 
 <style lang="less">
-  .map {
-    position: absolute;
-    width: 100%;
-    height: 100%;
+  .map-container {
+    .map {
+      position: absolute;
+      width: 100%;
+      height: 100%;
 
-    .leaflet-popup-content-wrapper {
-      border-radius: 3px;
+      .leaflet-popup-content-wrapper {
+        border-radius: 3px;
 
-      .leaflet-popup-content {
-        margin: 11px 12px;
+        .leaflet-popup-content {
+          margin: 11px 12px;
+        }
       }
-    }
 
-    .map-cluster-bounds {
-      fill: hsla(211, 85%, 36%, 1);
-      stroke: hsla(211, 85%, 36%, 1);
-      fill-opacity: 1;
-      stroke-opacity: 1;
-      stroke-width: 0px;
-      filter: url('#blur-filter');
-      opacity: 0.8;
-    }
-
-    .map-cluster {
-      color: #fff;
-      border-radius: 50%;
-      text-align: center;
-      box-shadow: 1px 1px 2px 1px rgba(0,0,0,0.4);
-
-      &.large {
-        background: hsla(211, 85%, 16%, 1);
-        line-height: 50px;
-        font-size: 18px;
+      .map-cluster-bounds {
+        fill: hsla(211, 85%, 36%, 1);
+        stroke: hsla(211, 85%, 36%, 1);
+        fill-opacity: 1;
+        stroke-opacity: 1;
+        stroke-width: 0px;
+        filter: url('#blur-filter');
+        opacity: 0.8;
       }
-      &.regular {
-        background: hsla(211, 85%, 22%, 1);
-        line-height: 45px;
-        font-size: 16px;
-      }
-      &.small {
-        background: hsla(211, 85%, 30%, 1);
-        line-height: 40px;
-        font-size: 14px;
-        font-weight: bold;
-      }
-    }
 
-    .map-marker {
-      position: relative;
+      .map-cluster {
+        color: #fff;
+        border-radius: 50%;
+        text-align: center;
+        box-shadow: 1px 1px 2px 1px rgba(0,0,0,0.4);
 
-      .icon {
-        display: block;
-        width: 100%;
-        height: 100%;
-        color: hsla(211, 85%, 50%, 1);
-        filter: url('#shadow-filter');
+        &.large {
+          background: hsla(211, 85%, 16%, 1);
+          line-height: 50px;
+          font-size: 18px;
+        }
+        &.regular {
+          background: hsla(211, 85%, 22%, 1);
+          line-height: 45px;
+          font-size: 16px;
+        }
+        &.small {
+          background: hsla(211, 85%, 30%, 1);
+          line-height: 40px;
+          font-size: 14px;
+          font-weight: bold;
+        }
+      }
+
+      .map-marker {
+        position: relative;
+
+        .icon {
+          display: block;
+          width: 100%;
+          height: 100%;
+          color: hsla(211, 85%, 50%, 1);
+          filter: url('#shadow-filter');
+        }
       }
     }
   }

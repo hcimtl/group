@@ -1,8 +1,8 @@
 {
-  "title": "Hallo Welt",
-  "and": "und",
   "topic": "Forschungsthemen",
   "institution": "Institution",
   "canton": "Kanton",
-  "head": "LeiterIn"
+  "head": "LeiterIn",
+  "group": "Gruppe",
+  "sort_by": "Sortieren nach"
 }
