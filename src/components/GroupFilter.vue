@@ -24,7 +24,16 @@
     name: 'group-filter',
     props: ['data','label', 'icon', 'fulltext'],
     data: function(){
-      return {}
+      return {
+        watcher: null
+      }
+    },
+    methods: {
+      refreshFilter(){
+        const value = $(this.$refs.filter).dropdown('get value')
+        $(this.$refs.filter).dropdown('clear')
+        if(value) $(this.$refs.filter).dropdown('set exactly', value.split(','))
+      }
     },
     computed: {
       title(){
@@ -43,9 +52,16 @@
       opts.onChange = (value, text, $choice) => {
         const arr = value ? value.split(',').map((v) => parseInt(v)) : []
         this.$store.commit('setSelected', { list: this.label,  data: arr })
+        $(this.$refs.filter).dropdown('hide')
       }
-
       $(this.$refs.filter).dropdown(opts)
+
+      this.watcher = this.$store.watch((state, getters) => { return state.language.terms }, value => {
+        this.refreshFilter()
+      })
+    },
+    destroyed: function(){
+      this.watcher()
     }
   }
 </script>

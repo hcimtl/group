@@ -5,5 +5,6 @@
   "head": "Chef/Cheffe",
   "group": "Groupe",
   "sort_by": "Classification par",
-  "export": "Export des résultats"
+  "export": "Export des résultats",
+  "show_more": "Plus"
 }

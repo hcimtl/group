@@ -9,19 +9,16 @@
       </div>
     </div>
     <div class="ui vertical segment clearing right aligned small-padding">
-      {{ term('sort_by') }}
+      <span>{{ term('sort_by') }} </span>
       <div class="ui inline dropdown" ref="filter">
         <div class="text"></div>
         <div class="menu"></div>
         <i class="dropdown icon"></i>
       </div>
     </div>
-    <div v-if="numGroups == 0" class="ui vertical segment basic">
-      <div class="ui active centered inline loader small"></div>
-    </div>
 
     <div v-for="group in groups" class="ui vertical segment">
-      <h3 class="ui header">
+      <h4 class="ui header">
         <a target="_blank" :href="group.website">{{ group.name }}</a>
         <button class="ui right floated icon mini primary button" @click="locate(group.id)">
           <i class="icon location arrow"></i>
@@ -29,8 +26,7 @@
         <div class="sub header">
           {{group.heads.join(', ')}}
         </div>
-      </h3>
-
+      </h4>
       <div class="description">
         <p>
           <div>
@@ -49,6 +45,19 @@
         </div>
       </div>
     </div>
+
+    <div v-if="isLoading" class="ui vertical segment basic">
+      <div class="ui active centered inline loader small"></div>
+    </div>
+
+    <div v-if="numGroups == 0 && !isLoading" class="ui vertical center aligned segment basic very padded">
+      <div class="ui compact message">No group matching your criteria!</div>
+    </div>
+
+    <div v-if="numGroups > groups.length" class="ui vertical center aligned segment basic very padded">
+      <button class="ui button primary centered" @click="showMore()">{{term('show_more')}}</button>
+    </div>
+
   </div>
 </template>
 
@@ -65,10 +74,14 @@
           head: 'heads'
         },
         amountToShow: 10,
-        watcher: null
+        watcher: null,
+        watcher2: null
       }
     },
     computed: {
+      isLoading(){
+        return this.$store.state.group.list.length == 0
+      },
       numGroups(){
         return this.$store.getters.groupsForList.length
       },
@@ -95,6 +108,9 @@
       sortBy(term){
         this.sort = term
       },
+      showMore(){
+        this.amountToShow += 10
+      },
       refreshFilter(){
         const values = []
         for(let option in this.sort_options){
@@ -119,9 +135,13 @@
       this.watcher = this.$store.watch((state, getters) => { return state.language.terms }, value => {
         this.refreshFilter()
       })
+      this.watcher2 = this.$store.watch((state, getters) => { return getters.groupsForList }, value => {
+        this.amountToShow = 10
+      })
     },
     destroyed: function(){
       this.watcher()
+      this.watcher2()
     }
   }
 </script>

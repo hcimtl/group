@@ -124,7 +124,9 @@ export const store = new Vuex.Store({
           (v.coords.lng <= slcB.ne[1] && v.coords.lng >= slcB.sw[1])
         )
       })
-      for(let i = 0; i < groups.length; i++){
+
+      const groupsLength = groups.length
+      for(let i = 0; i < groupsLength; i++){
         groups[i] = getters.groupById(groups[i].id)
       }
 

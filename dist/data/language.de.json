@@ -5,5 +5,6 @@
   "head": "LeiterIn",
   "group": "Gruppe",
   "sort_by": "Sortieren nach",
-  "export": "Ergebnisse Exportieren"
+  "export": "Ergebnisse Exportieren",
+  "show_more": "Mehr anzeigen"
 }

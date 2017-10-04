@@ -20,7 +20,9 @@ $.ajax({
 
   const groupArray = []
 
-  for(let i = 0; i < database.length; i++){
+  const dbLength = database.length
+
+  for(let i = 0; i < dbLength; i++){
     const r = database[i]
 
     groupArray[i] = {
@@ -73,10 +75,10 @@ $.ajax({
       }
     }
 
-    const topics = r.group_alltopics_de.split(/[\ ]*,[\ ]*/)
-    const topics_fr = r.group_alltopics_fr.split(/[\ ]*,[\ ]*/)
-    const topics_it = r.group_alltopics_it.split(/[\ ]*,[\ ]*/)
-    const topics_en = r.group_alltopics_en.split(/[\ ]*,[\ ]*/)
+    const topics = r.group_alltopics_de.split(',')
+    const topics_fr = r.group_alltopics_fr.split(',')
+    const topics_it = r.group_alltopics_it.split(',')
+    const topics_en = r.group_alltopics_en.split(',')
 
     topics.unshift(r.group_maintopic_de)
     topics_fr.unshift(r.group_maintopic_fr)
