@@ -25,20 +25,21 @@ $.ajax({
 
     groupArray[i] = {
       id: r.gid,
-      name: r.groupname,
+      name: r.groupname.trim(),
       headIds: [],
       institutionId: null,
-      departement: r.departement,
-      institute: r.institute,
+      departement: r.departement.trim(),
+      institute: r.institute.trim(),
       cantonId: null,
-      street: r.group_street,
-      city: r.group_city,
-      zip: r.group_zip,
-      website: r.group_website,
+      street: r.group_street.trim(),
+      city: r.group_city.trim(),
+      zip: r.group_zip.trim(),
+      website: r.group_website.replace('#', ''),
       coords: { lat: r.group_xcoord, lng: r.group_ycoord },
       topicIds: []
     }
 
+    r.canton = r.canton.trim()
     if(!cantonArray[r.cantonID]) {
       cantonArray[r.cantonID] = { name: r.canton, short: r.cantonID, id: cantonIndex }
       groupArray[i].cantonId = cantonIndex
@@ -47,6 +48,7 @@ $.ajax({
       groupArray[i].cantonId = cantonArray[r.cantonID].id
     }
 
+    r.institution = r.institution.trim()
     if(!institutionArray[r.institution]) {
       institutionArray[r.institution] = {name: r.institution, id: institutionIndex }
       groupArray[i].institutionId = institutionIndex

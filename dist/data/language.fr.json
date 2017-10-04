@@ -4,5 +4,6 @@
   "canton": "Canton",
   "head": "Chef/Cheffe",
   "group": "Groupe",
-  "sort_by": "Classification par"
+  "sort_by": "Classification par",
+  "export": "Export des résultats"
 }

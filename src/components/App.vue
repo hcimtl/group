@@ -1,5 +1,6 @@
 <template>
   <div id="app" class="ui container">
+
     <div class="filter-container">
       <form class="ui form">
         <div class="two fields">
@@ -12,10 +13,10 @@
         </div>
       </form>
     </div>
-    <div class="map-container">
-      <group-map></group-map>
-    </div>
+
+    <group-map></group-map>
     <group-list></group-list>
+    
   </div>
 </template>
 
@@ -39,11 +40,5 @@
   .filter-container {
     position: relative;
     z-index: 1000;
-  }
-  .map-container {
-    position: relative;
-    width: 100%;
-    padding-bottom: 71.4%;
-    z-index: 400;
   }
 </style>

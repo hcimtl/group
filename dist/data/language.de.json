@@ -4,5 +4,6 @@
   "canton": "Kanton",
   "head": "LeiterIn",
   "group": "Gruppe",
-  "sort_by": "Sortieren nach"
+  "sort_by": "Sortieren nach",
+  "export": "Ergebnisse Exportieren"
 }

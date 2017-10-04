@@ -1,6 +1,7 @@
 <template>
-  <div class="map" ref="map">
-    <svg>
+  <div class="map-container">
+    <div class="map" ref="map"></div>
+    <svg class="filters">
       <defs>
         <filter id="shadow-filter" x="0" y="0" width="200%" height="200%">
           <feOffset in="SourceAlpha" dx="1" dy="2" />
@@ -35,8 +36,9 @@
       return {
         icon: null,
         map: null,
-        markers: null,
+        clusterGroup: null,
         popup: null,
+        markers: [],
         watcher: null
       }
     },
@@ -46,122 +48,157 @@
 
         const minZoom = this.map.getMinZoom() // to make it work on zoomSnap 0.5
         this.map.setMinZoom(Math.floor(minZoom))
-        this.markers.clearLayers()
+        this.clusterGroup.clearLayers()
 
         const markers = []
         const groups = this.$store.getters.groups
         const l = groups.length
+
         for(let i = 0; i < l; i++){
           const group = groups[i]
-          const marker = L.marker(new L.LatLng(group.coords.lat, group.coords.lng), { icon: this.icon})
-          marker.data = group;
-          marker.bindPopup(this.popup);
-          markers.push(marker)
+          if(this.markers[group.id]) {
+            markers.push(this.markers[group.id])
+          } else {
+            const marker = L.marker(new L.LatLng(group.coords.lat, group.coords.lng), { icon: this.icon})
+            marker.data = group;
+            marker.bindPopup(this.popup);
+            this.markers[group.id] = marker
+            markers.push(marker)
+          }
         }
 
-        this.markers.addLayers(markers)
+        this.clusterGroup.addLayers(markers)
         this.map.setMinZoom(minZoom)
-        console.log(Date.now()-start)
+        console.log(`loading time: ${Date.now()-start}ms`)
+      },
+      initMap(){
+        this.map = new L.Map(this.$refs.map, {
+          zoomSnap: 0.5
+        });
+
+        const url = 'https://wmts10.geo.admin.ch/1.0.0/ch.swisstopo.pixelkarte-farbe/default/current/3857/{z}/{x}/{y}.jpeg';
+        const tilelayer = new L.tileLayer(url, {
+          attribution: '<a href="https://www.swisstopo.admin.ch/de/home.html" target="_blank"> swisstopo</a>'
+        });
+        this.map.addLayer(tilelayer);
+
+        const corner1 = L.latLng(47.933243004813725, 10.575639903386495)
+        const corner2 = L.latLng(45.639066961601685, 5.883893951813307)
+        const bounds = L.latLngBounds(corner2, corner1);
+        this.map.setMaxBounds(bounds);
+        this.map.fitBounds(bounds)
+        this.map.setMinZoom(this.map.getZoom())
+
+        this.map.on('moveend', () => {
+          const nb = this.map.getBounds()
+          this.$store.commit('setBounds', { ne: [nb._northEast.lat, nb._northEast.lng], sw: [nb._southWest.lat, nb._southWest.lng] })
+        })
+        this.map.on('popupopen', () => {
+          this.map.setMaxBounds(null)
+        })
+        this.map.on('popupclose', () => {
+          this.map.setMaxBounds(bounds)
+        })
+      },
+      initIcon(){
+        this.icon = L.divIcon({
+          className: 'map-marker',
+          iconAnchor: [22, 44],
+          iconSize: [44, 44],
+          popupAnchor: [0, -44],
+          html: `<svg class="icon" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+                  <circle fill="#06284b" cx="12" cy="9" r="3" fill-opacity="0.6" />
+                  <path fill="currentColor" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                </svg>`
+        })
+      },
+      initPopup(){
+        const vueObj = this;
+
+        this.popup = L.popup({
+          autoClose: false
+        }).setContent(function(){
+          const id = this._source.data.id;
+          const data = vueObj.$store.getters.groupById(id)
+          const term = vueObj.$store.getters.term
+          return (
+            `<strong><a target="_blank" href="${data.website}">${data.name}</a></strong><br>
+            <strong>${term("institution")}:</strong> ${data.institution}<br>
+            <strong>${term("head")}:</strong> ${data.heads.join(', ')}<br>
+            <strong>${term("topic")}:</strong> <strong>${data.mainTopic}</strong>, ${data.topics.join(', ')}<br>`
+          )
+        })
+      },
+      initCluster(){
+        this.clusterGroup = L.markerClusterGroup({
+          iconCreateFunction: function(cluster) {
+            const children = cluster.getChildCount()
+            const className = children < 25 ? 'small' : children > 100 ? 'large' : 'regular'
+            const size = children < 25 ? 40 : children > 100 ? 50 : 45
+            return L.divIcon({
+              className: `map-cluster ${className}`,
+              html: `<span>${children}</span>`,
+              iconSize: L.point(size, size)
+            })
+          },
+          maxClusterRadius: 80,
+          spiderLegPolylineOptions: {
+            opacity: 0
+          },
+          polygonOptions: {
+            className: 'map-cluster-bounds'
+          }
+        })
+        this.map.addLayer(this.clusterGroup)
+      },
+      locate(id){
+        const marker = this.markers[id]
+
+        this.map.flyTo(marker.getLatLng(), 17, {
+          duration: 0.8
+        })
+        this.map.once('moveend', () => {
+          this.clusterGroup.once('animationend', () => {
+            const cluster = this.clusterGroup.getVisibleParent(marker)
+            if(cluster != marker) cluster.spiderfy()
+            marker.openPopup()
+          })
+        });
       }
     },
-    unmount: function() {
-      this.map = null
-      this.popup = null
-      this.markers = null
-      this.icon = null
-    },
     mounted: function() {
-      const vueObj = this;
+      this.initMap()
+      this.initIcon()
+      this.initPopup()
+      this.initCluster()
 
-      this.map = new L.Map(this.$refs.map, {
-        zoomSnap: 0.5
-      });
-
-      const url = 'https://wmts10.geo.admin.ch/1.0.0/ch.swisstopo.pixelkarte-farbe/default/current/3857/{z}/{x}/{y}.jpeg';
-      const tilelayer = new L.tileLayer(url, {
-        attribution: '<a href="https://www.swisstopo.admin.ch/de/home.html" target="_blank"> swisstopo</a>'
-      });
-      this.map.addLayer(tilelayer);
-
-      const corner1 = L.latLng(47.933243004813725, 10.575639903386495)
-      const corner2 = L.latLng(45.639066961601685, 5.883893951813307)
-      const bounds = L.latLngBounds(corner2, corner1);
-      this.map.setMaxBounds(bounds);
-      this.map.fitBounds(bounds)
-      this.map.setMinZoom(this.map.getZoom())
-
-      this.map.on('moveend', () => {
-        const nb = this.map.getBounds()
-        this.$store.commit('setBounds', { ne: [nb._northEast.lat, nb._northEast.lng], sw: [nb._southWest.lat, nb._southWest.lng] })
+      this.eventHub.$on('locate', id => {
+        this.locate(id)
       })
-      this.map.on('popupopen', () => {
-        this.map.setMaxBounds(null)
-      })
-      this.map.on('popupclose', () => {
-        this.map.setMaxBounds(bounds)
-      })
-
-      this.popup = L.popup({
-        autoClose: false
-      }).setContent(function(){
-        const id = this._source.data.id;
-        const data = vueObj.$store.getters.groupById(id)
-        const term = vueObj.$store.getters.term
-        return (
-          `<strong><a target="_blank" href="${data.website.replace(/^#/,'')}">${data.name}</a></strong><br>
-          <strong>${term("institution")}:</strong> ${data.institution}<br>
-          <strong>${term("head")}:</strong> ${data.heads.join(', ')}<br>
-          <strong>${term("topic")}:</strong> <strong>${data.mainTopic}</strong>, ${data.topics.join(', ')}<br>`
-        )
-      })
-
-
-      this.icon = L.divIcon({
-        className: 'map-marker',
-        iconAnchor: [22, 44],
-        iconSize: [44, 44],
-        popupAnchor: [0, -44],
-        html: `<svg class="icon" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-                <circle fill="#06284b" cx="12" cy="9" r="3" fill-opacity="0.6" />
-                <path fill="currentColor" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-              </svg>`
-      })
-
-      this.markers = L.markerClusterGroup({
-        iconCreateFunction: function(cluster) {
-          const children = cluster.getChildCount()
-          const className = children < 25 ? 'small' : children > 100 ? 'large' : 'regular'
-          const size = children < 25 ? 40 : children > 100 ? 50 : 45
-          return L.divIcon({
-            className: `map-cluster ${className}`,
-            html: `<span>${children}</span>`,
-            iconSize: L.point(size, size)
-          })
-        },
-        maxClusterRadius: 80,
-        spiderLegPolylineOptions: {
-          opacity: 0
-        },
-        polygonOptions: {
-          className: 'map-cluster-bounds'
-        }
-      })
-      this.map.addLayer(this.markers)
 
       this.refresh()
-
       this.watcher = this.$store.watch((state, getters) => { return getters.groups }, (value) => {
         this.refresh()
       })
     },
     destroyed: function(){
       this.watcher()
+      this.eventHub.$off('locate')
     }
   }
 </script>
 
 <style lang="less">
   .map-container {
+    position: relative;
+    width: 100%;
+    padding-bottom: 71.4%;
+    z-index: 400;
+
+    .filters {
+      display: none;
+    }
+
     .map {
       position: absolute;
       width: 100%;

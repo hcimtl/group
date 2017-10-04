@@ -6,6 +6,17 @@ import './data.js'
 
 import './app.less'
 
+
+const eventHub = new Vue()
+
+Vue.mixin({
+  data: function () {
+    return {
+      eventHub: eventHub
+    }
+  }
+})
+
 new Vue({
   el: '#app',
   store,
