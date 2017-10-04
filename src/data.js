@@ -18,14 +18,14 @@ $.ajax({
   const headArray = {}
   const topicArray = {}
 
-  const groupArray = []
+  const groupArray = {}
 
   const dbLength = database.length
 
   for(let i = 0; i < dbLength; i++){
     const r = database[i]
 
-    groupArray[i] = {
+    groupArray[r.gid] = {
       id: r.gid,
       name: r.groupname.trim(),
       headIds: [],
@@ -44,19 +44,19 @@ $.ajax({
     r.canton = r.canton.trim()
     if(!cantonArray[r.cantonID]) {
       cantonArray[r.cantonID] = { name: r.canton, short: r.cantonID, id: cantonIndex }
-      groupArray[i].cantonId = cantonIndex
+      groupArray[r.gid].cantonId = cantonIndex
       cantonIndex++
     } else {
-      groupArray[i].cantonId = cantonArray[r.cantonID].id
+      groupArray[r.gid].cantonId = cantonArray[r.cantonID].id
     }
 
     r.institution = r.institution.trim()
     if(!institutionArray[r.institution]) {
       institutionArray[r.institution] = {name: r.institution, id: institutionIndex }
-      groupArray[i].institutionId = institutionIndex
+      groupArray[r.gid].institutionId = institutionIndex
       institutionIndex++
     } else {
-      groupArray[i].institutionId = institutionArray[r.institution].id
+      groupArray[r.gid].institutionId = institutionArray[r.institution].id
     }
 
 
@@ -67,10 +67,10 @@ $.ajax({
       if(head.length > 0){
         if(!headArray[head]) {
           headArray[head] = { name: head, id: headIndex }
-          groupArray[i].headIds.push(headIndex)
+          groupArray[r.gid].headIds.push(headIndex)
           headIndex++
         } else {
-          groupArray[i].headIds.push(headArray[head].id)
+          groupArray[r.gid].headIds.push(headArray[head].id)
         }
       }
     }
@@ -94,12 +94,12 @@ $.ajax({
       if(topic.length > 0){
         if(!topicArray[topic]) {
           topicArray[topic] = { name_de: topic, name_fr: topic_fr, name_it: topic_it, name_en: topic_en, id: topicIndex, main: t == 0 ? true : false }
-          groupArray[i].topicIds.push(topicIndex)
+          groupArray[r.gid].topicIds.push(topicIndex)
           topicIndex++
         } else {
-          groupArray[i].topicIds.push(topicArray[topic].id)
+          groupArray[r.gid].topicIds.push(topicArray[topic].id)
         }
-        if(t == 0) groupArray[i].mainTopicId = topicArray[topic].id
+        if(t == 0) groupArray[r.gid].mainTopicId = topicArray[topic].id
       }
     }
   }
@@ -108,7 +108,7 @@ $.ajax({
   store.commit('setData', { list: 'institution', data: institutionArray })
   store.commit('setData', { list: 'canton', data: cantonArray })
   store.commit('setData', { list: 'head', data: headArray })
-  store.commit('setData', { list: 'group', data:  groupArray })
+  store.commit('setData', { list: 'group', data: groupArray })
 
 })
 

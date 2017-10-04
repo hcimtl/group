@@ -7,7 +7,8 @@
           <group-filter :data="this.$store.getters.topics" label="topic" icon="tags"></group-filter>
           <group-filter :data="this.$store.getters.institutions" label="institution" icon="home" fulltext="true"></group-filter>
         </div>
-        <div class="two fields">
+        <button class="ui button basic tiny labeled icon compact" @click="extended = !extended"><i class="icon angle down"></i>Erweiterte Filter</button>
+        <div class="two fields" v-if="extended">
           <group-filter :data="this.$store.getters.cantons" label="canton" icon="marker"></group-filter>
           <group-filter :data="this.$store.getters.heads" label="head" icon="user" fulltext="true"></group-filter>
         </div>
@@ -16,7 +17,7 @@
 
     <group-map></group-map>
     <group-list></group-list>
-    
+
   </div>
 </template>
 
@@ -28,7 +29,9 @@
   export default {
     name: 'app',
     data: function(){
-      return {}
+      return {
+        extended: false
+      }
     },
     components: {
       GroupFilter, GroupMap, GroupList

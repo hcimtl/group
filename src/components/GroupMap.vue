@@ -44,7 +44,7 @@
     },
     methods: {
       refresh(){
-        const start = Date.now()
+        //const start = Date.now()
 
         const minZoom = this.map.getMinZoom() // to make it work on zoomSnap 0.5
         this.map.setMinZoom(Math.floor(minZoom))
@@ -69,7 +69,7 @@
 
         this.clusterGroup.addLayers(markers)
         this.map.setMinZoom(minZoom)
-        console.log(`loading time: ${Date.now()-start}ms`)
+        //console.log(`loading time: ${Date.now()-start}ms`)
       },
       initMap(){
         this.map = new L.Map(this.$refs.map, {
@@ -116,17 +116,25 @@
         const vueObj = this;
 
         this.popup = L.popup({
-          autoClose: false
+          autoClose: false,
+          minWidth: 400,
+          autoPanPadding: L.point(50,50)
         }).setContent(function(){
           const id = this._source.data.id;
           const data = vueObj.$store.getters.groupById(id)
           const term = vueObj.$store.getters.term
-          return (
-            `<strong><a target="_blank" href="${data.website}">${data.name}</a></strong><br>
-            <strong>${term("institution")}:</strong> ${data.institution}<br>
-            <strong>${term("head")}:</strong> ${data.heads.join(', ')}<br>
-            <strong>${term("topic")}:</strong> <strong>${data.mainTopic}</strong>, ${data.topics.join(', ')}<br>`
-          )
+          return (`
+            <div class="ui segment basic vertical">
+              <h4 class="ui header">
+                <a target="_blank" href="${data.website}">${data.name}</a>
+                <div class="sub header">${data.heads.join(', ')}</div>
+              </h4>
+              <div class="content">
+                <p>${data.institution}</p>
+                <p><strong>${data.mainTopic}</strong>, ${data.topics.join(', ')}</p>
+              </div>
+            </div>
+          `)
         })
       },
       initCluster(){
@@ -141,7 +149,7 @@
               iconSize: L.point(size, size)
             })
           },
-          maxClusterRadius: 80,
+          maxClusterRadius: 75,
           spiderLegPolylineOptions: {
             opacity: 0
           },
@@ -153,17 +161,18 @@
       },
       locate(id){
         const marker = this.markers[id]
-
-        this.map.flyTo(marker.getLatLng(), 17, {
-          duration: 0.8
-        })
-        this.map.once('moveend', () => {
-          this.clusterGroup.once('animationend', () => {
-            const cluster = this.clusterGroup.getVisibleParent(marker)
-            if(cluster != marker) cluster.spiderfy()
-            marker.openPopup()
+        if(!marker.isPopupOpen()){
+          this.map.flyTo(marker.getLatLng(), 17, {
+            duration: 0.8
           })
-        });
+          this.map.once('moveend', () => {
+            this.clusterGroup.once('animationend', () => {
+              const cluster = this.clusterGroup.getVisibleParent(marker)
+              if(cluster != marker) cluster.spiderfy()
+              marker.openPopup()
+            })
+          });
+        }
       }
     },
     mounted: function() {
@@ -208,7 +217,18 @@
         border-radius: 3px;
 
         .leaflet-popup-content {
-          margin: 11px 12px;
+          margin: 15px 15px;
+
+          .segment {
+            padding: 0;
+
+            .header {
+              margin-bottom: 0.5em;
+            }
+            p {
+              margin: 0.25em 0;
+            }
+          }
         }
       }
 

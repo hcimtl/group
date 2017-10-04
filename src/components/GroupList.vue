@@ -20,8 +20,8 @@
     <div v-for="group in groups" class="ui vertical segment">
       <h4 class="ui header">
         <a target="_blank" :href="group.website">{{ group.name }}</a>
-        <button class="ui right floated icon mini primary button" @click="locate(group.id)">
-          <i class="icon location arrow"></i>
+        <button class="ui right floated icon tiny primary button" @click="locate(group.id)">
+          <i class="icon marker"></i>
         </button>
         <div class="sub header">
           {{group.heads.join(', ')}}
@@ -29,15 +29,9 @@
       </h4>
       <div class="description">
         <p>
-          <div>
-            <strong>{{group.institution}}</strong>
-          </div>
-          <div v-if="group.institution != group.departement">
-            {{group.departement}}
-          </div>
-          <div v-if="group.institution != group.institute && group.departement !== group.institute">
-            {{group.institute}}
-          </div>
+          <span><strong>{{group.institution}}</strong></span><br>
+          <span v-if="group.institution != group.departement">{{group.departement}}</span><br>
+          <span v-if="group.institution != group.institute && group.departement !== group.institute">{{group.institute}}</span><br>
         </p>
         <div class="ui labels">
           <div class="ui black tiny label">{{group.mainTopic}}</div>
@@ -67,10 +61,10 @@
     props: [],
     data: function(){
       return {
-        sort: 'institution',
+        sort: 'group',
         sort_options: {
-          institution: 'institution',
           group: 'name',
+          institution: 'institution',
           head: 'heads'
         },
         amountToShow: 10,
@@ -90,9 +84,9 @@
         const key = this.sort_options[this.sort]
         groups = groups.sort((a,b) => {
           if(a[key] instanceof Array) {
-            return a[key][0] < b[key][0] ? -1 : a[key][0] > b[key][0] ? 1 : 0
+            return a[key][0].localeCompare(b[key][0])
           } else {
-            return a[key] < b[key] ? -1 : a[key] > b[key] ? 1 : 0
+            return a[key].localeCompare(b[key])
           }
         })
         return groups.slice(0, this.amountToShow)
