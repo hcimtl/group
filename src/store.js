@@ -53,7 +53,7 @@ export const store = new Vuex.Store({
     topics(state){
       return state.topic.list.map(id => {
         const topic = state.topic.data[id]
-        topic.name = topic['name_'+state.language.selected]
+        topic.name = topic[state.language.selected]
         return topic
       })
     },
@@ -66,8 +66,19 @@ export const store = new Vuex.Store({
     heads({head}){
       return head.list.map(id => head.data[id])
     },
+    allGroups(state, getters) {
+      const groups = state.group.list.map(id => state.group.data[id])
+      const lang = state.language.terms
+
+      const groupsLength = groups.length
+      for(let i = 0; i < groupsLength; i++){
+        groups[i] = getters.groupById(groups[i].id)
+      }
+      return groups;
+    },
     groups(state, getters){
-      let groups = state.group.list.map(id => state.group.data[id])
+
+      let groups = getters.allGroups
       const slcC = state.canton.selected
       const slcI = state.institution.selected
       const slcH = state.head.selected
@@ -113,10 +124,10 @@ export const store = new Vuex.Store({
         return group
       }
     },
-    groupsForList(state, getters){
+
+    groupsAvailable(state, getters){
       let groups = getters.groups
       const slcB = state.bounds
-      const lang = state.language.selected
 
       groups = groups.filter((v) => {
         return  (
@@ -125,17 +136,7 @@ export const store = new Vuex.Store({
         )
       })
 
-      const groupsLength = groups.length
-      for(let i = 0; i < groupsLength; i++){
-        groups[i] = getters.groupById(groups[i].id)
-      }
-
       return groups
-    },
-    selected(state, getters){
-      return (label) => {
-        return state[label].selected.map(id => state[label].data[id])
-      }
     }
   }
 })

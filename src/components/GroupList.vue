@@ -17,7 +17,7 @@
       </div>
     </div>
 
-    <div v-for="group in groups" class="ui vertical segment">
+    <div v-for="group in groupsShow" :key="group.id" class="ui vertical segment">
       <h4 class="ui header">
         <a target="_blank" :href="group.website">{{ group.name }}</a>
         <button class="ui right floated icon tiny primary button" @click="locate(group.id)">
@@ -30,8 +30,8 @@
       <div class="description">
         <p>
           <span><strong>{{group.institution}}</strong></span><br>
-          <span v-if="group.institution != group.departement">{{group.departement}}</span><br>
-          <span v-if="group.institution != group.institute && group.departement !== group.institute">{{group.institute}}</span><br>
+          <span v-if="group.institution != group.departement">{{group.departement}} <br></span>
+          <span v-if="group.institution != group.institute && group.departement !== group.institute">{{group.institute}}<br></span>
         </p>
         <div class="ui labels">
           <div class="ui black tiny label">{{group.mainTopic}}</div>
@@ -48,7 +48,7 @@
       <div class="ui compact message">No group matching your criteria!</div>
     </div>
 
-    <div v-if="numGroups > groups.length" class="ui vertical center aligned segment basic very padded">
+    <div v-if="numGroups > groupsShow.length" class="ui vertical center aligned segment basic very padded">
       <button class="ui button primary centered" @click="showMore()">{{term('show_more')}}</button>
     </div>
 
@@ -77,19 +77,26 @@
         return this.$store.state.group.list.length == 0
       },
       numGroups(){
-        return this.$store.getters.groupsForList.length
+        return this.groups.length
       },
       groups(){
-        let groups = this.$store.getters.groupsForList;
+        let groups = this.$store.getters.groupsAvailable;
         const key = this.sort_options[this.sort]
         groups = groups.sort((a,b) => {
           if(a[key] instanceof Array) {
+            if(!a[key][0]) a[key][0] = 'zzz'
+            if(!b[key][0]) b[key][0] = 'zzz'
             return a[key][0].localeCompare(b[key][0])
           } else {
             return a[key].localeCompare(b[key])
           }
         })
-        return groups.slice(0, this.amountToShow)
+        return groups
+      },
+      groupsShow(){
+        const groups = this.groups.slice(0, this.amountToShow)
+
+        return groups;
       }
     },
     methods: {
@@ -129,19 +136,25 @@
       this.watcher = this.$store.watch((state, getters) => { return state.language.terms }, value => {
         this.refreshFilter()
       })
-      this.watcher2 = this.$store.watch((state, getters) => { return getters.groupsForList }, value => {
+      this.watcher2 = this.$store.watch((state, getters) => { return getters.groupsAvailable }, value => {
         this.amountToShow = 10
       })
     },
     destroyed: function(){
       this.watcher()
       this.watcher2()
+    },
+    updated: function(){
+      $(window).trigger('resize')
     }
   }
 </script>
 
 <style lang="less">
   .list-container {
+    position: relative;
+    z-index: 900;
+
     .ui.header {
       margin-top: 0;
     }

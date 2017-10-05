@@ -93,7 +93,7 @@ $.ajax({
 
       if(topic.length > 0){
         if(!topicArray[topic]) {
-          topicArray[topic] = { name_de: topic, name_fr: topic_fr, name_it: topic_it, name_en: topic_en, id: topicIndex, main: t == 0 ? true : false }
+          topicArray[topic] = { de: topic, fr: topic_fr, it: topic_it, en: topic_en, id: topicIndex, main: t == 0 ? true : false }
           groupArray[r.gid].topicIds.push(topicIndex)
           topicIndex++
         } else {

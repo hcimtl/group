@@ -44,7 +44,6 @@
     },
     methods: {
       refresh(){
-        //const start = Date.now()
 
         const minZoom = this.map.getMinZoom() // to make it work on zoomSnap 0.5
         this.map.setMinZoom(Math.floor(minZoom))
@@ -69,7 +68,6 @@
 
         this.clusterGroup.addLayers(markers)
         this.map.setMinZoom(minZoom)
-        //console.log(`loading time: ${Date.now()-start}ms`)
       },
       initMap(){
         this.map = new L.Map(this.$refs.map, {
@@ -131,7 +129,9 @@
               </h4>
               <div class="content">
                 <p>${data.institution}</p>
+                <p class="ui divider"></p>
                 <p><strong>${data.mainTopic}</strong>, ${data.topics.join(', ')}</p>
+                </div>
               </div>
             </div>
           `)
@@ -161,8 +161,12 @@
       },
       locate(id){
         const marker = this.markers[id]
-        if(!marker.isPopupOpen()){
-          this.map.flyTo(marker.getLatLng(), 17, {
+
+        $(window).trigger('goToMap')
+        this.map.closePopup();
+
+        this.eventHub.$once('mapInView', () => {
+          this.map.flyTo(marker.getLatLng(), 18, {
             duration: 0.8
           })
           this.map.once('moveend', () => {
@@ -172,7 +176,7 @@
               marker.openPopup()
             })
           });
-        }
+        })
       }
     },
     mounted: function() {
@@ -193,6 +197,9 @@
     destroyed: function(){
       this.watcher()
       this.eventHub.$off('locate')
+    },
+    updated: function(){
+      $(window).trigger('resize')
     }
   }
 </script>
@@ -217,7 +224,10 @@
         border-radius: 3px;
 
         .leaflet-popup-content {
-          margin: 15px 15px;
+          max-width: 70vw;
+          padding: 15px 15px;
+          margin: 0 !important;
+          box-sizing: border-box;
 
           .segment {
             padding: 0;
@@ -227,6 +237,10 @@
             }
             p {
               margin: 0.25em 0;
+
+              &.divider {
+                margin: 0.5em 0;
+              }
             }
           }
         }
