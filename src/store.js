@@ -47,7 +47,7 @@ export const store = new Vuex.Store({
     term({language}){
       return (key, params) => {
         const term = language.terms[key]
-        return term ? term : '';
+        return term ? term : key;
       }
     },
     topics(state){

@@ -17,9 +17,9 @@
         <filter id="blur-filter" x="-250px" y="-250px" width="500px" height="500px">
           <feGaussianBlur in="SourceGraphic" stdDeviation="12" />
           <feComponentTransfer>
-            <feFuncA type="table" tableValues="0 1 1 1 1 1 1 1 1"/>
+            <feFuncA type="table" tableValues="0 1 1 1 1 1 1 1 1 1 1 1 1 1 1"/>
           </feComponentTransfer>
-          <feGaussianBlur stdDeviation="12" />
+          <feGaussianBlur stdDeviation="10" />
         </filter>
       </defs>
     </svg>
@@ -162,20 +162,11 @@
       locate(id){
         const marker = this.markers[id]
 
-        $(window).trigger('goToMap')
+        this.eventHub.$emit('goToMap', {})
         this.map.closePopup();
 
-        this.eventHub.$once('mapInView', () => {
-          this.map.flyTo(marker.getLatLng(), 18, {
-            duration: 0.8
-          })
-          this.map.once('moveend', () => {
-            this.clusterGroup.once('animationend', () => {
-              const cluster = this.clusterGroup.getVisibleParent(marker)
-              if(cluster != marker) cluster.spiderfy()
-              marker.openPopup()
-            })
-          });
+        this.clusterGroup.zoomToShowLayer(marker, () => {
+          marker.openPopup()
         })
       }
     },
@@ -212,7 +203,8 @@
     z-index: 400;
 
     .filters {
-      display: none;
+      height: 0;
+      width: 0;
     }
 
     .map {

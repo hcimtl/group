@@ -1,6 +1,17 @@
 
-function asc(a, b) {
-  return a.name < b.name ? -1 : a.name > b.name ? 1 : 0
+
+function sortLocale(key, dir){
+  const mult = (dir == 'desc') ? -1 : (dir == 'asc') ? 1 : 1
+
+  return (a, b) => {
+    if(a[key] instanceof Array) {
+      if(!a[key][0]) a[key][0] = 'zzz'
+      if(!b[key][0]) b[key][0] = 'zzz'
+      return a[key][0].localeCompare(b[key][0]) * mult
+    } else {
+      return a[key].localeCompare(b[key]) * mult
+    }
+  }
 }
 
 function intersect(a,b){
@@ -22,17 +33,29 @@ function intersect(a,b){
 
 // https://stackoverflow.com/questions/4197591/parsing-url-hash-fragment-identifier-with-javascript
 function getHashParams() {
-    var hashParams = {};
-    var e,
-        a = /\+/g,  // Regex for replacing addition symbol with a space
-        r = /([^&;=]+)=?([^&;]*)/g,
-        d = function (s) { return decodeURIComponent(s.replace(a, " ")); },
-        q = window.location.hash.substring(1);
+  var hashParams = {};
+  var e,
+      a = /\+/g,  // Regex for replacing addition symbol with a space
+      r = /([^&;=]+)=?([^&;]*)/g,
+      d = function (s) { return decodeURIComponent(s.replace(a, " ")); },
+      q = window.location.hash.substring(1);
 
-    while (e = r.exec(q))
-       hashParams[d(e[1])] = d(e[2]);
+  while (e = r.exec(q))
+   hashParams[d(e[1])] = d(e[2]);
 
-    return hashParams;
+  return hashParams;
 }
 
-export { asc, intersect, getHashParams }
+function saveAs(blob, fileName) {
+  const a = document.createElement("a");
+  document.body.appendChild(a);
+  a.style = "display: none";
+  const url = window.URL.createObjectURL(blob);
+  a.href = url;
+  a.download = fileName;
+  a.click();
+  window.URL.revokeObjectURL(url);
+}
+
+
+export { saveAs, sortLocale, intersect, getHashParams }

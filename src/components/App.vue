@@ -70,24 +70,15 @@
           $(window.frameElement).height(height+extra)
         })
       }
-      $(window).on('goToMap', () => {
+      this.eventHub.$on('goToMap', () => {
         const target = iframe ? window.parent.document : document
         const top = iframe ? $(iframe).offset().top : 0
-        const currentTop = $(target).scrollTop()
-        const speed = Math.sqrt(Math.abs(currentTop - top))*5 + 50
-
-        let triggered = false
-        $(target).find('body, html').animate({ scrollTop: top }, speed, 'swing', () => {
-          if(triggered){
-            this.eventHub.$emit('mapInView', {})
-          }
-          triggered = true
-        })
+        $(target).scrollTop(top)
       })
     },
     destroyed: function(){
       $(window).off('resize')
-      $(window).off('goToMap')
+      this.eventHub.$off('goToMap')
     },
     updated: function(){
       $(window).trigger('resize')

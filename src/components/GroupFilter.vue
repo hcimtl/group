@@ -18,7 +18,7 @@
   import './../../node_modules/semantic-ui-css/components/transition.min.js'
   import './../../node_modules/semantic-ui-css/components/dropdown.min.js'
 
-  import { asc } from './../util.js'
+  import { sortLocale } from './../util.js'
 
   export default {
     name: 'group-filter',
@@ -43,7 +43,7 @@
         return this.options < 1
       },
       options(){
-        return this.data.sort(asc)
+        return this.data.sort(sortLocale('name'))
       }
     },
     mounted: function(){

@@ -1,7 +1,7 @@
 <template>
   <div class="list-container">
     <div class="ui segment basic vertical right aligned">
-      <button class="ui icon left floated tiny compact labeled button small-padding">
+      <button @click="exportData" class="ui icon left floated tiny compact labeled button small-padding">
         <i class="icon download"></i>{{ term('export') }} (CSV)
       </button>
       <div class="ui label">
@@ -45,7 +45,7 @@
     </div>
 
     <div v-if="numGroups == 0 && !isLoading" class="ui vertical center aligned segment basic very padded">
-      <div class="ui compact message">No group matching your criteria!</div>
+      <div class="ui compact message">{{term('no_results')}}</div>
     </div>
 
     <div v-if="numGroups > groupsShow.length" class="ui vertical center aligned segment basic very padded">
@@ -56,6 +56,8 @@
 </template>
 
 <script>
+  import { saveAs, sortLocale } from './../util.js'
+
   export default {
     name: 'group-list',
     props: [],
@@ -82,15 +84,7 @@
       groups(){
         let groups = this.$store.getters.groupsAvailable;
         const key = this.sort_options[this.sort]
-        groups = groups.sort((a,b) => {
-          if(a[key] instanceof Array) {
-            if(!a[key][0]) a[key][0] = 'zzz'
-            if(!b[key][0]) b[key][0] = 'zzz'
-            return a[key][0].localeCompare(b[key][0])
-          } else {
-            return a[key].localeCompare(b[key])
-          }
-        })
+        groups = groups.sort(sortLocale(key))
         return groups
       },
       groupsShow(){
@@ -129,6 +123,29 @@
             this.sort = value
           }
         })
+      },
+      exportData(){
+        const groupsLength = this.groups.length
+        const table = []
+        for(let i = 0; i < groupsLength; i++){
+          const group = this.groups[i]
+          const row = {
+            [this.term('research_group')]: group.name,
+            [this.term('head')]: group.heads.join(', '),
+            [this.term('institution')]: group.institution,
+            [this.term('departement')]: group.departement,
+            [this.term('institute')]: group.institute,
+            [this.term('canton')]: group.canton,
+            [this.term('website')]: group.website,
+            [this.term('topic')]: `${group.mainTopic}, ${group.topics.join(', ')}`,
+          }
+          table.push(row)
+        }
+
+        const csv = $.csv.fromObjects(table, { separator: ';' })
+
+        const blob = new Blob([`\ufeff${csv}\r\n${this.term('source_message')}`], {type: "text/csv;charset=ANSI"})
+        saveAs(blob, `${this.term('export_name')}.csv`);
       }
     },
     mounted: function(){
