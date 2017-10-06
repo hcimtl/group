@@ -47,14 +47,23 @@ function getHashParams() {
 }
 
 function saveAs(blob, fileName) {
-  const a = document.createElement("a");
-  document.body.appendChild(a);
-  a.style = "display: none";
-  const url = window.URL.createObjectURL(blob);
-  a.href = url;
-  a.download = fileName;
-  a.click();
-  window.URL.revokeObjectURL(url);
+  if (window.navigator.msSaveBlob) {
+    window.navigator.msSaveBlob(blob, fileName);
+  } else {
+    window.URL = window.URL || window.webkitURL;
+    const a = document.createElement("a");
+    document.body.appendChild(a);
+    a.style = "display: none";
+    const url = window.URL.createObjectURL(blob);
+    a.href = url;
+    a.download = fileName;
+    a.click();
+    setTimeout(function(){
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+    }, 100); 
+  }
+
 }
 
 

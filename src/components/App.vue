@@ -18,7 +18,7 @@
           </div>
         </div>
         <transition name="slide">
-          <div class="fields" v-if="extended">
+          <div class="fields" v-show="extended">
             <div class="fourteen wide field">
               <div class="two fields">
                 <group-filter :data="this.$store.getters.cantons" label="canton" icon="marker"></group-filter>
@@ -100,8 +100,7 @@
 
         .label-without-content {
           &::after {
-            content: ' ';
-            white-space: pre;
+            content: '\00A0';
           }
 
           @media only screen and (max-width: 768px) {

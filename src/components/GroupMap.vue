@@ -1,28 +1,6 @@
 <template>
   <div class="map-container">
     <div class="map" ref="map"></div>
-    <svg class="filters">
-      <defs>
-        <filter id="shadow-filter" x="0" y="0" width="200%" height="200%">
-          <feOffset in="SourceAlpha" dx="1" dy="2" />
-          <feGaussianBlur in="offOut" stdDeviation="2" />
-          <feComponentTransfer>
-            <feFuncA type="linear" slope="0.7"/>
-          </feComponentTransfer>
-          <feMerge>
-            <feMergeNode/>
-            <feMergeNode in="SourceGraphic"/>
-          </feMerge>
-        </filter>
-        <filter id="blur-filter" x="-250px" y="-250px" width="500px" height="500px">
-          <feGaussianBlur in="SourceGraphic" stdDeviation="12" />
-          <feComponentTransfer>
-            <feFuncA type="table" tableValues="0 1 1 1 1 1 1 1 1 1 1 1 1 1 1"/>
-          </feComponentTransfer>
-          <feGaussianBlur stdDeviation="10" />
-        </filter>
-      </defs>
-    </svg>
   </div>
 </template>
 
@@ -238,13 +216,16 @@
         }
       }
 
+      .leaflet-overlay-pane {
+        filter: url('./../assets/filter.svg#blur-filter');
+      }
+
       .map-cluster-bounds {
         fill: hsla(211, 85%, 36%, 1);
         stroke: hsla(211, 85%, 36%, 1);
         fill-opacity: 1;
         stroke-opacity: 1;
-        stroke-width: 0px;
-        filter: url('#blur-filter');
+        stroke-width: 0;
         opacity: 0.8;
       }
 
@@ -280,7 +261,7 @@
           width: 100%;
           height: 100%;
           color: hsla(211, 85%, 50%, 1);
-          filter: url('#shadow-filter');
+          filter: url('./../assets/filter.svg#shadow-filter');
         }
       }
     }
