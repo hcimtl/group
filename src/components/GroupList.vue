@@ -17,7 +17,7 @@
       </div>
     </div>
 
-    <group-list-item v-for="group in groupsShow" :key="group.id" :group="group"></group-list-item>
+    <group-list-item v-for="group in groupsShow" :key="group.id" v-bind:group="group"></group-list-item>
 
     <div v-if="isLoading" class="ui vertical segment basic">
       <div class="ui active centered inline loader small"></div>
@@ -75,9 +75,6 @@
       }
     },
     methods: {
-      locate(id){
-        this.eventHub.$emit('locate', id)
-      },
       term(term){
         return this.$store.getters.term(term)
       },
