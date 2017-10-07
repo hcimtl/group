@@ -4,30 +4,25 @@
     <div class="filter-container">
       <form class="ui form">
         <div class="fields">
-          <div class="fourteen wide field">
+          <div class="fifteen wide field">
             <div class="two fields">
               <group-filter :data="this.$store.getters.topics" label="topic" icon="tags"></group-filter>
               <group-filter :data="this.$store.getters.institutions" label="institution" icon="home" fulltext="true"></group-filter>
             </div>
-          </div>
-          <div class="two wide field">
-            <label class="label-without-content"></label>
-            <button :class="[!extended ? 'basic' : '', 'ui fluid button icon']" @click="toggleExtendedFilter">
-              <i class="icon options"></i>
-            </button>
-          </div>
-        </div>
-        <transition name="slide">
-          <div class="fields" v-show="extended">
-            <div class="fourteen wide field">
-              <div class="two fields">
+            <transition name="slide">
+              <div class="two fields" v-show="extended">
                 <group-filter :data="this.$store.getters.cantons" label="canton" icon="marker"></group-filter>
                 <group-filter :data="this.$store.getters.heads" label="head" icon="user" fulltext="true"></group-filter>
               </div>
-            </div>
+            </transition>
           </div>
-        </transition>
-
+          <div class="field">
+            <label class="label-without-content"></label>
+            <button :class="[!extended ? 'basic' : 'basic black', 'ui fluid button icon']" @click="toggleExtendedFilter">
+              <i :class="[extended ? 'close' : 'options', 'icon']"></i>
+            </button>
+          </div>
+        </div>
       </form>
     </div>
 
@@ -99,10 +94,14 @@
 
     .ui.form {
 
+      .ui.icon.button {
+        padding: 0.763em 0.6875em 0.763em;
+      }
+
+      & > .fields {
+        margin-bottom: 0;
+      }
       .fields {
-        .fields {
-          margin-bottom: 0;
-        }
 
         .label-without-content {
           &::after {
@@ -125,12 +124,24 @@
 
         &.slide-enter-active, &.slide-leave-active {
           transition: all 0.35s;
-          max-height: 150px;
+          max-height: 67px;
           overflow: hidden;
         }
         &.slide-enter, &.slide-leave-to  {
           max-height: 0px;
           margin: 0px;
+        }
+
+        @media only screen and (max-width: 768px) {
+          &.slide-enter-active, &.slide-leave-active {
+            transition: all 0.35s;
+            max-height: 165px;
+            overflow: hidden;
+          }
+          &.slide-enter, &.slide-leave-to  {
+            max-height: 0px;
+            margin: 0px;
+          }
         }
       }
     }

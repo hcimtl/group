@@ -1,10 +1,11 @@
 <template>
   <div class="ui vertical segment">
+    <button class="ui right floated icon mini primary button" @click="locate(group.id)">
+      <i class="icon marker"></i>
+    </button>
     <h4 class="ui header">
-      <a target="_blank" :href="group.website">{{ group.name }}</a>
-      <button class="ui right floated icon tiny primary button" @click="locate(group.id)">
-        <i class="icon marker"></i>
-      </button>
+      <a target="_blank" :href="group.website">{{ group.name }} <sup><i class="icon external"></i></sup></a>
+
       <div class="sub header">
         {{ group.heads.map(head => head.name).join(', ') }}
       </div>
@@ -16,7 +17,7 @@
         <span v-if="group.institution != group.institute && group.departement !== group.institute">{{group.institute}}<br></span>
       </p>
       <div class="ui labels">
-        <div v-for="topic in topics" :key="topic.id" :class="[(topic.id == group.mainTopicId) ? 'black' : 'basic', 'ui tiny label']">
+        <div v-for="topic in topics" :key="topic.id" :class="[(topic.id == group.mainTopicId) ? 'black' : 'basic', 'ui mini label']">
           {{ topic.name }}
         </div>
       </div>

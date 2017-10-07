@@ -8,6 +8,11 @@ module.exports = {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist')
   },
+  resolve: {
+     alias: {
+        '../../theme.config$': path.join(__dirname, 'src/theme/theme.config')
+     }
+  },
   module: {
     rules: [
       {

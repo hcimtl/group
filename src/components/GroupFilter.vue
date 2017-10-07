@@ -15,8 +15,6 @@
 </template>
 
 <script>
-  import './../../node_modules/semantic-ui-css/components/transition.min.js'
-  import './../../node_modules/semantic-ui-css/components/dropdown.min.js'
 
   import { sortLocale } from './../util.js'
 

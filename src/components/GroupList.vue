@@ -1,7 +1,7 @@
 <template>
   <div class="list-container">
     <div class="ui segment basic vertical right aligned">
-      <button @click="exportData" class="ui icon left floated tiny compact labeled button small-padding">
+      <button @click="exportData" class="ui icon left floated mini compact labeled button small-padding">
         <i class="icon download"></i>{{ term('export') }} (CSV)
       </button>
       <div class="ui label">
@@ -28,7 +28,7 @@
     </div>
 
     <div v-if="numGroups > groupsShow.length" class="ui vertical center aligned segment basic very padded">
-      <button class="ui button primary centered" @click="showMore()">{{term('show_more')}}</button>
+      <button class="ui button primary icon centered" @click="showMore()"><i class="icon angle down"></i> {{term('show_more')}}</button>
     </div>
 
   </div>

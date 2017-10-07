@@ -148,14 +148,14 @@
           return (`
             <div class="ui segment basic vertical">
               <h4 class="ui header">
-                <a target="_blank" href="${data.website}">${data.name}</a>
+                <a target="_blank" href="${data.website}">${data.name} <sup><i class="icon external"></i></sup></a>
                 <div class="sub header">${heads}</div>
               </h4>
               <div class="content">
                 <p>${data.institution}</p>
                 <p class="ui divider"></p>
-                <p>${topics}</p>
-                </div>
+
+                <span class="ui header"><div class="sub header">${topics}</div></span>
               </div>
             </div>
           `)

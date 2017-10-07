@@ -5,7 +5,14 @@ import { store } from './store.js'
 import './data.js'
 
 import './index.html'
-import './app.less'
+
+import 'semantic-ui-less/definitions/modules/transition.js'
+import 'semantic-ui-less/definitions/modules/dropdown.js'
+
+import 'leaflet/dist/leaflet.css';
+import 'leaflet.markercluster/dist/MarkerCluster.css';
+import './theme/semantic.less'
+
 import './data/bafu_umwelt_fgrps_db.csv'
 import './data/language.de.json'
 import './data/language.fr.json'
