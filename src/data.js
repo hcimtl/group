@@ -60,9 +60,9 @@ $.ajax({
     }
 
 
-    const heads = r.group_head.split(/[\ ]*,[\ ]*/)
+    const heads = r.group_head.split(/[\ ]*,[\ ]*|^[\ ]*|[\ ]*$/)
     for(let h in heads) {
-      const head = heads[h].trim()
+      const head = heads[h]
 
       if(head.length > 0){
         if(!headArray[head]) {
@@ -75,33 +75,33 @@ $.ajax({
       }
     }
 
-    const topics = r.group_alltopics_de.split(',')
-    const topics_fr = r.group_alltopics_fr.split(',')
-    const topics_it = r.group_alltopics_it.split(',')
-    const topics_en = r.group_alltopics_en.split(',')
+    const topics = r.group_alltopics_de.split(/[\ ]*,[\ ]*|^[\ ]*|[\ ]*$/)
+    const topics_fr = r.group_alltopics_fr.split(/[\ ]*,[\ ]*|^[\ ]*|[\ ]*$/)
+    const topics_it = r.group_alltopics_it.split(/[\ ]*,[\ ]*|^[\ ]*|[\ ]*$/)
+    const topics_en = r.group_alltopics_en.split(/[\ ]*,[\ ]*|^[\ ]*|[\ ]*$/)
 
-    topics.unshift(r.group_maintopic_de)
-    topics_fr.unshift(r.group_maintopic_fr)
-    topics_it.unshift(r.group_maintopic_it)
-    topics_en.unshift(r.group_maintopic_en)
+    const main_topic = r.group_maintopic_de
+
 
     for(let t in topics) {
-      const topic = topics[t].trim()
-      const topic_fr = topics_fr[t] ? topics_fr[t].trim() : ''
-      const topic_it = topics_it[t] ? topics_it[t].trim() : ''
-      const topic_en = topics_en[t] ? topics_en[t].trim() : ''
+      const topic = topics[t] ? topics[t] : false
+      const topic_fr = topics_fr[t] ? topics_fr[t] : false
+      const topic_it = topics_it[t] ? topics_it[t] : false
+      const topic_en = topics_en[t] ? topics_en[t] : false
 
-      if(topic_fr == '' || topic_it == '' || topic_en == '') break;
+      if(!topic || !topic_fr || !topic_it || !topic_en) break
 
-      if(topic.length > 0){
-        if(!topicArray[topic]) {
-          topicArray[topic] = { de: topic, fr: topic_fr, it: topic_it, en: topic_en, id: topicIndex, main: t == 0 ? true : false }
-          groupArray[r.gid].topicIds.push(topicIndex)
-          topicIndex++
-        } else {
-          groupArray[r.gid].topicIds.push(topicArray[topic].id)
-        }
-        if(t == 0) groupArray[r.gid].mainTopicId = topicArray[topic].id
+      if(!topicArray[topic]) {
+        topicArray[topic] = { de: topic, fr: topic_fr, it: topic_it, en: topic_en, id: topicIndex }
+        groupArray[r.gid].topicIds.push(topicIndex)
+        topicIndex++
+      } else {
+        groupArray[r.gid].topicIds.push(topicArray[topic].id)
+      }
+
+      if(topic == main_topic) {
+        topicArray[topic].main = true
+        groupArray[r.gid].mainTopicId = topicArray[topic].id
       }
     }
   }

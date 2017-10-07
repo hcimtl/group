@@ -1,15 +1,33 @@
 
 
-function sortLocale(key, dir){
+function sortLocale(opt, dir){
   const mult = (dir == 'desc') ? -1 : (dir == 'asc') ? 1 : 1
 
-  return (a, b) => {
-    if(a[key] instanceof Array) {
-      if(!a[key][0]) a[key][0] = 'zzz'
-      if(!b[key][0]) b[key][0] = 'zzz'
-      return a[key][0].localeCompare(b[key][0]) * mult
-    } else {
+  if(typeof(opt) == 'string'){
+    const key = opt
+    return (a, b) => {
+      if(!a[key] || !b[key]) return false
       return a[key].localeCompare(b[key]) * mult
+    }
+  } else if(typeof(opt) == 'object'){
+    if(opt.key && opt.type){
+      if(opt.key instanceof Array && opt.type == 'array'){
+        const l = opt.key.length
+        return (a, b) => {
+
+          let t_a = a
+          let t_b = b
+          for(let i = 0; i < l; i++){
+            t_a = t_a[opt.key[i]]
+            t_b = t_b[opt.key[i]]
+            if(!t_a || !t_b) {
+              return false
+            }
+
+          }
+          return t_a.localeCompare(t_b) * mult
+        }
+      }
     }
   }
 }
@@ -61,7 +79,7 @@ function saveAs(blob, fileName) {
     setTimeout(function(){
         document.body.removeChild(a);
         window.URL.revokeObjectURL(url);
-    }, 100); 
+    }, 100);
   }
 
 }

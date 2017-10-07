@@ -17,28 +17,7 @@
       </div>
     </div>
 
-    <div v-for="group in groupsShow" :key="group.id" class="ui vertical segment">
-      <h4 class="ui header">
-        <a target="_blank" :href="group.website">{{ group.name }}</a>
-        <button class="ui right floated icon tiny primary button" @click="locate(group.id)">
-          <i class="icon marker"></i>
-        </button>
-        <div class="sub header">
-          {{group.heads.join(', ')}}
-        </div>
-      </h4>
-      <div class="description">
-        <p>
-          <span><strong>{{group.institution}}</strong></span><br>
-          <span v-if="group.institution != group.departement">{{group.departement}} <br></span>
-          <span v-if="group.institution != group.institute && group.departement !== group.institute">{{group.institute}}<br></span>
-        </p>
-        <div class="ui labels">
-          <div class="ui black tiny label">{{group.mainTopic}}</div>
-          <div class="ui basic tiny label" v-for="topic in group.topics">{{topic}}</div>
-        </div>
-      </div>
-    </div>
+    <group-list-item v-for="group in groupsShow" :key="group.id" :group="group"></group-list-item>
 
     <div v-if="isLoading" class="ui vertical segment basic">
       <div class="ui active centered inline loader small"></div>
@@ -56,10 +35,12 @@
 </template>
 
 <script>
+  import GroupListItem from './GroupListItem.vue'
   import { saveAs, sortLocale } from './../util.js'
 
   export default {
     name: 'group-list',
+    components: { GroupListItem },
     props: [],
     data: function(){
       return {
@@ -67,7 +48,7 @@
         sort_options: {
           group: 'name',
           institution: 'institution',
-          head: 'heads'
+          head: { type: 'array', key: ['heads', 0, 'name']}
         },
         amountToShow: 10,
         watcher: null,
@@ -131,13 +112,13 @@
           const group = this.groups[i]
           const row = {
             [this.term('research_group')]: group.name,
-            [this.term('head')]: group.heads.join(', '),
+            [this.term('head')]: group.heads.map(head => head.name).join(', '),
             [this.term('institution')]: group.institution,
             [this.term('departement')]: group.departement,
             [this.term('institute')]: group.institute,
             [this.term('canton')]: group.canton,
             [this.term('website')]: group.website,
-            [this.term('topic')]: `${group.mainTopic}, ${group.topics.join(', ')}`,
+            [this.term('topic')]: group.topics.map(topic => topic.name).join(', ')
           }
           table.push(row)
         }

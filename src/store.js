@@ -67,13 +67,10 @@ export const store = new Vuex.Store({
       return head.list.map(id => head.data[id])
     },
     allGroups(state, getters) {
-      const groups = state.group.list.map(id => state.group.data[id])
-      const lang = state.language.terms
+      const start = new Date().getTime()
 
-      const groupsLength = groups.length
-      for(let i = 0; i < groupsLength; i++){
-        groups[i] = getters.groupById(groups[i].id)
-      }
+      const lang = state.language.terms
+      const groups = state.group.list.map(id => getters.groupById(id))
       return groups;
     },
     groups(state, getters){
@@ -97,29 +94,12 @@ export const store = new Vuex.Store({
     },
     groupById(state, getters){
       return (id) => {
-        if(!id) return {}
-        if(!state.group.data[id]) return {}
         const group = state.group.data[id]
 
         group.canton = state.canton.data[group.cantonId].name
         group.institution = state.institution.data[group.institutionId].name
-
-        const topicLength = group.topicIds.length
-        group.topics = []
-        for(let i = 0; i < topicLength; i++){
-          const topic = state.topic.data[group.topicIds[i]]
-          if(topic.id == group.mainTopicId){
-            group.mainTopic = topic.name
-          } else {
-            group.topics.push(topic.name)
-          }
-        }
-
-        const headLength = group.headIds.length
-        group.heads = []
-        for(let i = 0; i < headLength; i++){
-          group.heads.push(state.head.data[group.headIds[i]].name)
-        }
+        group.topics = group.topicIds.map(topic_id => state.topic.data[topic_id])
+        group.heads = group.headIds.map(head_id => state.head.data[head_id])
 
         return group
       }
@@ -135,7 +115,7 @@ export const store = new Vuex.Store({
           (v.coords.lng <= slcB.ne[1] && v.coords.lng >= slcB.sw[1])
         )
       })
-
+      
       return groups
     }
   }

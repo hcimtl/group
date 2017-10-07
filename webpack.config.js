@@ -31,18 +31,30 @@ module.exports = {
           use: ['css-loader', 'less-loader']
         })
       },
-      /*{
-        test: /\.(html|csv|json)$/,
+      {
+        test: /\.(html)$/,
         use: [
           {
             loader: 'file-loader',
             options: {
-              outputPath: '/',
-              name: '[path][name].[ext]'
+              outputPath: '',
+              name: '[name].[ext]'
             }
           }
         ]
-      },*/
+      },
+      {
+        test: /\.(csv|json)$/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              outputPath: 'data/',
+              name: '[name].[ext]'
+            }
+          }
+        ]
+      },
       {
         test: /\.(eot|svg|ttf|woff|woff2)$/,
         use: [

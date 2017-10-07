@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="ui container">
+  <div id="app">
 
     <div class="filter-container">
       <form class="ui form">
@@ -87,6 +87,12 @@
 </script>
 
 <style lang="less">
+  #app {
+    position: relative;
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+  }
   .filter-container {
     position: relative;
     z-index: 1000;

@@ -137,22 +137,24 @@
 
         this.popup = L.popup({
           autoClose: false,
-          minWidth: 400,
+          minWidth: 440,
           autoPanPadding: L.point(50,50)
         }).setContent(function(){
           const id = this._source.data.id;
           const data = vueObj.$store.getters.groupById(id)
           const term = vueObj.$store.getters.term
+          const topics = data.topics.sort((a,b) => { return a.id == data.mainTopicId ? -1 : 1 }).map(topic => (data.mainTopicId == topic.id) ? `<strong>${topic.name}</strong>` : topic.name).join(', ')
+          const heads = data.heads.map(head => head.name).join(', ')
           return (`
             <div class="ui segment basic vertical">
               <h4 class="ui header">
                 <a target="_blank" href="${data.website}">${data.name}</a>
-                <div class="sub header">${data.heads.join(', ')}</div>
+                <div class="sub header">${heads}</div>
               </h4>
               <div class="content">
                 <p>${data.institution}</p>
                 <p class="ui divider"></p>
-                <p><strong>${data.mainTopic}</strong>, ${data.topics.join(', ')}</p>
+                <p>${topics}</p>
                 </div>
               </div>
             </div>
