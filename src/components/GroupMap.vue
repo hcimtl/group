@@ -75,16 +75,60 @@
         this.map.on('popupclose', () => {
           this.map.setMaxBounds(bounds)
         })
+
+        const ce = (ele) => { return document.createElementNS("http://www.w3.org/2000/svg", ele) }
+        const filter = ce('filter')
+        filter.setAttribute('id', 'blur-filter')
+        filter.setAttribute('height', '500')
+        filter.setAttribute('width', '500')
+        filter.setAttribute('x', '-250')
+        filter.setAttribute('y', '-250')
+        const feGaussianBlur = ce('feGaussianBlur')
+        feGaussianBlur.setAttribute('in', 'SourceGraphic')
+        feGaussianBlur.setAttribute('stdDeviation', '12')
+        const feComponentTransfer = ce('feComponentTransfer')
+        const feFuncA = ce('feFuncA')
+        feFuncA.setAttribute('type', 'table')
+        feFuncA.setAttribute('tableValues', '0 0.8 0.8 0.8 0.8 0.8 0.8 0.8 0.8 0.8 0.8')
+        const feGaussianBlur2 = ce('feGaussianBlur')
+        feGaussianBlur2.setAttribute('stdDeviation', '10')
+        feComponentTransfer.appendChild(feFuncA)
+        filter.appendChild(feGaussianBlur)
+        filter.appendChild(feComponentTransfer)
+        filter.appendChild(feGaussianBlur2)
+
+        this.map.on('layeradd', (layer) => {
+          if(layer.layer.options.className == 'map-cluster-bounds'){
+            const svg = layer.layer._renderer._container
+            if(!svg.querySelector('#blur-filter')) svg.appendChild(filter)
+            svg.querySelector('.map-cluster-bounds').setAttribute('filter', 'url(#blur-filter)')
+          }
+        })
       },
       initIcon(){
         this.icon = L.divIcon({
           className: 'map-marker',
-          iconAnchor: [22, 44],
-          iconSize: [44, 44],
-          popupAnchor: [0, -44],
-          html: `<svg class="icon" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-                  <circle fill="#06284b" cx="12" cy="9" r="3" fill-opacity="0.6" />
-                  <path fill="currentColor" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+          iconAnchor: [30, 60],
+          iconSize: [60, 60],
+          popupAnchor: [0, -60],
+          html: `<svg class="icon" viewBox="0 0 30 30" width="30" height="30" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <filter id="shadow-filter" x="-15" y="-15" width="30" height="30">
+                      <feOffset in="SourceAlpha" dx="1" dy="2" />
+                      <feGaussianBlur stdDeviation="2" />
+                      <feComponentTransfer>
+                        <feFuncA type="linear" slope="0.7"/>
+                      </feComponentTransfer>
+                      <feMerge>
+                        <feMergeNode/>
+                        <feMergeNode in="SourceGraphic"/>
+                      </feMerge>
+                    </filter>
+                  </defs>
+                  <g filter="url(#shadow-filter)">
+                    <circle fill="#06284B" fill-opacity="0.6" class="st0" cx="15" cy="12" r="3"/>
+                    <path fill="currentColor" d="M15,5c-3.9,0-7,3.1-7,7c0,5.3,7,13,7,13s7-7.8,7-13C22,8.1,18.9,5,15,5z M15,14.5c-1.4,0-2.5-1.1-2.5-2.5s1.1-2.5,2.5-2.5s2.5,1.1,2.5,2.5S16.4,14.5,15,14.5z"/>
+                  </g>
                 </svg>`
         })
       },
@@ -128,6 +172,7 @@
             })
           },
           maxClusterRadius: 75,
+          spiderfyDistanceMultiplier: 1.3,
           spiderLegPolylineOptions: {
             opacity: 0
           },
@@ -216,9 +261,7 @@
         }
       }
 
-      .leaflet-overlay-pane {
-        filter: url('./../assets/filter.svg#blur-filter');
-      }
+
 
       .map-cluster-bounds {
         fill: hsla(211, 85%, 36%, 1);
@@ -261,7 +304,6 @@
           width: 100%;
           height: 100%;
           color: hsla(211, 85%, 50%, 1);
-          filter: url('./../assets/filter.svg#shadow-filter');
         }
       }
     }

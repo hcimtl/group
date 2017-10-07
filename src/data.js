@@ -91,6 +91,8 @@ $.ajax({
       const topic_it = topics_it[t] ? topics_it[t].trim() : ''
       const topic_en = topics_en[t] ? topics_en[t].trim() : ''
 
+      if(topic_fr == '' || topic_it == '' || topic_en == '') break;
+
       if(topic.length > 0){
         if(!topicArray[topic]) {
           topicArray[topic] = { de: topic, fr: topic_fr, it: topic_it, en: topic_en, id: topicIndex, main: t == 0 ? true : false }

@@ -7,7 +7,7 @@
       <i class="dropdown icon"></i>
       <div class="text"></div>
       <div class="menu">
-        <div v-for="option in options" :class="[option.main ? 'bold' : '', 'item']" :data-value="option.id">{{ option.name }}</div>
+        <div v-for="option in options" :key="option.id" :class="[option.main ? 'bold' : '', 'item']" :data-value="option.id">{{ option.name }}</div>
       </div>
     </div>
 
@@ -52,7 +52,6 @@
       opts.onChange = (value, text, $choice) => {
         const arr = value ? value.split(',').map((v) => parseInt(v)) : []
         this.$store.commit('setSelected', { list: this.label,  data: arr })
-        $(this.$refs.filter).dropdown('hide')
       }
       $(this.$refs.filter).dropdown(opts)
 
