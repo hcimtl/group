@@ -15,6 +15,7 @@
         clusterGroup: null,
         popup: null,
         markers: [],
+        maxBounds: [[47.808142, 10.489640], [45.817915, 5.956769]],
         watcher: null
       }
     },
@@ -56,11 +57,9 @@
         });
         this.map.addLayer(tilelayer);
 
-        const corner1 = L.latLng(47.933243004813725, 10.575639903386495)
-        const corner2 = L.latLng(45.639066961601685, 5.883893951813307)
-        const bounds = L.latLngBounds(corner2, corner1);
-        this.map.setMaxBounds(bounds);
-        this.map.fitBounds(bounds)
+        this.map.fitBounds(this.maxBounds)
+        this.map.setMaxBounds(this.maxBounds)
+
         this.map.setMinZoom(this.map.getZoom())
 
         this.map.on('moveend', () => {
@@ -71,7 +70,7 @@
           this.map.setMaxBounds(null)
         })
         this.map.on('popupclose', () => {
-          this.map.setMaxBounds(bounds)
+          this.map.setMaxBounds(this.maxBounds)
         })
 
         const ce = (ele) => { return document.createElementNS("http://www.w3.org/2000/svg", ele) }
@@ -172,7 +171,7 @@
             })
           },
           maxClusterRadius: 75,
-          spiderfyDistanceMultiplier: 1.3,
+          spiderfyDistanceMultiplier: 1.5,
           spiderLegPolylineOptions: {
             opacity: 0
           },
@@ -191,6 +190,26 @@
         this.clusterGroup.zoomToShowLayer(marker, () => {
           marker.openPopup()
         })
+      },
+      zoomToBounds(){
+        const groups = this.$store.getters.groups
+        const gLength = groups.length
+
+
+        if(gLength > 0 && gLength != this.$store.state.group.list.length){
+          const lats = groups.map(group => group.coords.lat).sort((a,b) => {return a == '' ? 0 : a > b ? -1 : a < b ? 1 : 0})
+          const lngs = groups.map(group => group.coords.lng).sort((a,b) => {return a == '' ? 0 : a > b ? -1 : a < b ? 1 : 0})
+
+          this.map.fitBounds([
+            [lats[0], lngs[0]],
+            [lats[lats.length-1], lngs[lngs.length-1]]
+          ], {
+            maxZoom: 12,
+            padding: [20, 20]
+          })
+        } else {
+          this.map.fitBounds(this.maxBounds)
+        }
       }
     },
     mounted: function() {
@@ -206,6 +225,7 @@
       this.refresh()
       this.watcher = this.$store.watch((state, getters) => { return getters.groups }, (value) => {
         this.refresh()
+        this.zoomToBounds()
       })
     },
     destroyed: function(){
@@ -222,7 +242,7 @@
   .map-container {
     position: relative;
     width: 100%;
-    padding-bottom: 71.4%;
+    padding-bottom: 65.4%;
     z-index: 400;
 
     .filters {
