@@ -155,13 +155,40 @@ function loadLanguage(){
   });
 }
 
-loadHash()
-$(window).on('hashchange', function(){
+$(document).ready(function(){
   loadHash()
+
+  if(window.frameElement){
+    window.setInterval(function(){
+      loadHash()
+    }, 50)
+  } else {
+    $(window).on('hashchange', function(){
+      loadHash()
+    })
+  }
 })
+
 function loadHash(){
   const params = getHashParams()
-  if(params.lang){
+  let topics = []
+  let institutions = []
+  let cantons = []
+  let heads = []
+
+  if(params.lang && params.lang != store.state.language.selected){
     store.commit('setLanguage', { data: params.lang })
   }
+
+  if(params.topic) topics = params.topic.split(',').map(id => parseInt(id))
+  if(params.institution) institutions = params.institution.split(',').map(id => parseInt(id))
+  if(params.canton) cantons = params.canton.split(',').map(id => parseInt(id))
+  if(params.head) heads = params.head.split(',').map(id => parseInt(id))
+
+
+  if(store.state.topic.selected.toString() != topics.toString()) store.commit('setSelected', { list: 'topic', data: topics })
+  if(store.state.institution.selected.toString() != institutions.toString()) store.commit('setSelected', { list: 'institution', data: institutions })
+  if(store.state.canton.selected.toString() != cantons.toString()) store.commit('setSelected', { list: 'canton', data: cantons })
+  if(store.state.head.selected.toString() != heads.toString()) store.commit('setSelected', { list: 'head', data: heads })
+
 }
