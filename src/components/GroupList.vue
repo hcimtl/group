@@ -28,7 +28,7 @@
     </div>
 
     <div v-if="numGroups > groupsShow.length" class="ui vertical center aligned segment basic very padded">
-      <button class="ui button primary icon centered" @click="showMore()"><i class="icon angle down"></i> {{term('show_more')}}</button>
+      <button class="ui button primary icon centered" @click="showMore()">{{term('show_more')}}</button>
     </div>
 
   </div>
