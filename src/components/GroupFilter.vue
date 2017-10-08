@@ -16,7 +16,7 @@
 
 <script>
 
-  import { sortLocale } from './../util.js'
+  import { sortLocale, setHashParams } from './../util.js'
 
   export default {
     name: 'group-filter',
@@ -48,8 +48,9 @@
       const opts = {};
       if(this.fulltext) opts.fullTextSearch = true
       opts.onChange = (value, text, $choice) => {
-        const arr = value ? value.split(',').map((v) => parseInt(v)) : []
-        this.$store.commit('setSelected', { list: this.label,  data: arr })
+        setHashParams(this.label, value)
+        /*const arr = value ? value.split(',').map((v) => parseInt(v)) : []
+        this.$store.commit('setSelected', { list: this.label,  data: arr })*/
       }
       $(this.$refs.filter).dropdown(opts)
 
