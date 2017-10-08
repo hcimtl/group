@@ -93,7 +93,7 @@ module.exports = {
     new webpack.ProvidePlugin({
       jQuery: 'jquery/dist/jquery.min',
       $: 'jquery/dist/jquery.min',
-      Promise: 'bluebird'
+      Promise: 'bluebird/js/browser/bluebird.core'
     })
   ]
 }

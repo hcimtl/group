@@ -9,6 +9,9 @@ import './index.html'
 import 'semantic-ui-less/definitions/modules/transition.js'
 import 'semantic-ui-less/definitions/modules/dropdown.js'
 
+import 'leaflet/dist/leaflet.js'
+import 'leaflet.markercluster/dist/leaflet.markercluster.js'
+
 import 'leaflet/dist/leaflet.css';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
 import './theme/semantic.less'

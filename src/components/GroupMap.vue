@@ -5,8 +5,6 @@
 </template>
 
 <script>
-  import './../../node_modules/leaflet/dist/leaflet.js'
-  import './../../node_modules/leaflet.markercluster/dist/leaflet.markercluster.js'
 
   export default {
     name: 'group-map',
