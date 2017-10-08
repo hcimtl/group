@@ -49,21 +49,6 @@ function intersect(a,b){
   return r
 }
 
-// https://stackoverflow.com/questions/4197591/parsing-url-hash-fragment-identifier-with-javascript
-function getHashParams() {
-  var hashParams = {};
-  var e,
-      a = /\+/g,  // Regex for replacing addition symbol with a space
-      r = /([^&;=]+)=?([^&;]*)/g,
-      d = function (s) { return decodeURIComponent(s.replace(a, " ")); },
-      q = window.location.hash.substring(1);
-
-  while (e = r.exec(q))
-   hashParams[d(e[1])] = d(e[2]);
-
-  return hashParams;
-}
-
 function saveAs(blob, fileName) {
   if (window.navigator.msSaveBlob) {
     window.navigator.msSaveBlob(blob, fileName);
@@ -81,8 +66,47 @@ function saveAs(blob, fileName) {
         window.URL.revokeObjectURL(url);
     }, 100);
   }
+}
 
+// https://stackoverflow.com/questions/4197591/parsing-url-hash-fragment-identifier-with-javascript
+function getHashParams(hashString = false) {
+
+  let hash = window.location.hash
+  if(hashString) hash = hashString
+  var hashParams = {};
+  var e,
+      a = /\+/g,  // Regex for replacing addition symbol with a space
+      r = /([^&;=]+)=?([^&;]*)/g,
+      d = function (s) { return decodeURIComponent(s.replace(a, " ")); },
+      q = hash.substring(1);
+
+  while (e = r.exec(q))
+   hashParams[d(e[1])] = d(e[2]);
+
+  if(hashString === false){
+    if(window.frameElement){
+      hashParams = $.extend(hashParams, getHashParams(window.parent.location.hash))
+    }
+  }
+
+  return hashParams;
 }
 
 
-export { saveAs, sortLocale, intersect, getHashParams }
+function setHashParams(param, values){
+  const loc = window.frameElement ? window.parent.location : window.location
+  let params = getHashParams()
+  const toAdd = {}
+  toAdd[param] = values
+  $.extend(params, toAdd)
+
+  const hashStrings = []
+
+  for(let i in params) {
+    if(params[i]) hashStrings.push(`${i}=${params[i]}`)
+  }
+  loc.hash = hashStrings.join('&')
+}
+
+
+export { saveAs, sortLocale, intersect, getHashParams, setHashParams }
