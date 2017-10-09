@@ -10,7 +10,7 @@
               <group-filter :data="this.$store.getters.institutions" label="institution" icon="home" fulltext="true"></group-filter>
             </div>
             <transition name="slide">
-              <div class="two fields" v-show="extended">
+              <div class="two fields" v-show="extended || forceExtended">
                 <group-filter :data="this.$store.getters.cantons" label="canton" icon="marker"></group-filter>
                 <group-filter :data="this.$store.getters.heads" label="head" icon="user" fulltext="true"></group-filter>
               </div>
@@ -42,6 +42,11 @@
     data: function(){
       return {
         extended: false
+      }
+    },
+    computed: {
+      forceExtended(){
+        return this.$store.state.canton.selected.length > 0 || this.$store.state.head.selected.length > 0
       }
     },
     methods: {

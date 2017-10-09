@@ -23,7 +23,8 @@
     props: ['data','label', 'icon', 'fulltext'],
     data: function(){
       return {
-        watcher: null
+        watcher: null,
+        watcher2: null
       }
     },
     methods: {
@@ -45,14 +46,31 @@
       }
     },
     mounted: function(){
-      const opts = {};
+      const opts = {}
       if(this.fulltext) opts.fullTextSearch = true
       opts.onChange = (value, text, $choice) => {
         setHashParams(this.label, value)
-        /*const arr = value ? value.split(',').map((v) => parseInt(v)) : []
-        this.$store.commit('setSelected', { list: this.label,  data: arr })*/
       }
       $(this.$refs.filter).dropdown(opts)
+
+      this.watcher2 = this.$store.watch((state, getters) => { return state[this.label].selected }, value => {
+        let oldValue = $(this.$refs.filter).dropdown('get value')
+        const newValue = value.map(id => id.toString())
+
+        oldValue = oldValue ? oldValue.split(',').map(id => id.toString()) : []
+
+        const toAdd = newValue.filter((i) => { return oldValue.indexOf(i) == -1 })
+        const toRemove = oldValue.filter((i) => { return newValue.indexOf(i) == -1 })
+
+        if(oldValue != newValue){
+          toRemove.forEach((i) => {
+            $(this.$refs.filter).dropdown('remove selected', i)
+          })
+          toAdd.forEach((i) => {
+            $(this.$refs.filter).dropdown('set selected', i)
+          })
+        }
+      })
 
       this.watcher = this.$store.watch((state, getters) => { return state.language.terms }, value => {
         this.refreshFilter()
@@ -60,6 +78,7 @@
     },
     destroyed: function(){
       this.watcher()
+      this.watcher2()
     },
     updated: function(){
       $(window).trigger('resize')
