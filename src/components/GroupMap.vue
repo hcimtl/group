@@ -149,10 +149,9 @@
                 <div class="sub header">${heads}</div>
               </h4>
               <div class="content">
-                <p>${data.institution}</p>
+                <p><strong>${data.institution}</strong></p>
                 <p class="ui divider"></p>
-
-                <span class="ui header"><div class="sub header">${topics}</div></span>
+                <p class="keywords">${topics}</p>
               </div>
             </div>
           `)
@@ -267,14 +266,15 @@
           .segment {
             padding: 0;
 
-            .header {
-              margin-bottom: 0.5em;
-            }
             p {
               margin: 0.25em 0;
 
               &.divider {
                 margin: 0.5em 0;
+              }
+              &.keywords {
+                color: #333;
+                font-size: 0.937em;
               }
             }
           }
@@ -289,7 +289,6 @@
         fill-opacity: 1;
         stroke-opacity: 1;
         stroke-width: 0;
-        opacity: 0.8;
       }
 
       .map-cluster {
@@ -312,7 +311,6 @@
           background: hsla(211, 85%, 30%, 1);
           line-height: 40px;
           font-size: 14px;
-          font-weight: bold;
         }
       }
 

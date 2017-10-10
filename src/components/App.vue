@@ -41,7 +41,7 @@
     name: 'app',
     data: function(){
       return {
-        extended: false
+        extended: true
       }
     },
     computed: {
@@ -63,6 +63,13 @@
       document.domain = domain
       const iframe = window.frameElement
       const extra = 150
+
+      $(window).one('mousemove', (e) => {
+        setTimeout(() => {
+          this.extended = false
+        }, 500)
+
+      })
 
       if(iframe){
         $(window).on('resize', () => {

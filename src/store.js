@@ -115,7 +115,7 @@ export const store = new Vuex.Store({
           (v.coords.lng <= slcB.ne[1] && v.coords.lng >= slcB.sw[1])
         )
       })
-      
+
       return groups
     }
   }
