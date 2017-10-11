@@ -64,19 +64,19 @@
       const iframe = window.frameElement
       const extra = 150
 
-      $(window).one('mousemove', (e) => {
-        setTimeout(() => {
-          this.extended = false
-        }, 500)
-
-      })
-
       if(iframe){
         $(window).on('resize', () => {
           const height = $('#app').height()
           $(window.frameElement).height(height+extra)
         })
       }
+
+      $(window).one('mousemove', (e) => {
+        setTimeout(() => {
+          this.extended = false
+        }, 500)
+      })
+
       this.eventHub.$on('goToMap', () => {
         const target = iframe ? window.parent.document : document
         const top = iframe ? $(iframe).offset().top : 0

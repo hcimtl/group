@@ -11,10 +11,10 @@ export const store = new Vuex.Store({
       selected: 'de',
       terms: {}
     },
-    topic: { list: [], data: {}, selected: [] },
-    institution: { list: [], data: {}, selected: [] },
-    canton: { list: [], data: {}, selected: [] },
-    head: { list: [], data: {}, selected: [] },
+    topic: { list: [], data: {}, selected: [], available: [] },
+    institution: { list: [], data: {}, selected: [], available: []},
+    canton: { list: [], data: {}, selected: [], available: [] },
+    head: { list: [], data: {}, selected: [], available: [] },
     group: { list: [], data: {}, selected: [] },
     bounds: {
       ne: [47.933243004813725, 10.575639903386495],
@@ -51,47 +51,27 @@ export const store = new Vuex.Store({
       }
     },
     topics(state){
-      return state.topic.list.map(id => {
+      return state.topic.available.map(id => {
         const topic = state.topic.data[id]
         topic.name = topic[state.language.selected]
         return topic
       })
     },
     institutions({institution}){
-      return institution.list.map(id => institution.data[id])
+      return institution.available.map(id => institution.data[id])
     },
     cantons({canton}){
-      return canton.list.map(id => canton.data[id])
+      return canton.available.map(id => canton.data[id])
     },
     heads({head}){
-      return head.list.map(id => head.data[id])
+      return head.available.map(id => head.data[id])
     },
     allGroups(state, getters) {
-      const start = new Date().getTime()
-
       const lang = state.language.terms
       const groups = state.group.list.map(id => getters.groupById(id))
       return groups;
     },
-    groups(state, getters){
 
-      let groups = getters.allGroups
-      const slcC = state.canton.selected
-      const slcI = state.institution.selected
-      const slcH = state.head.selected
-      const slcT = state.topic.selected
-
-      groups = groups.filter((v) => {
-        return  (
-          (slcC.length === 0 || slcC.indexOf(v.cantonId) != -1) &&
-          (slcI.length === 0 || slcI.indexOf(v.institutionId) != -1) &&
-          (slcH.length === 0 || intersect(slcH, v.headIds).length > 0) &&
-          (slcT.length === 0 || intersect(slcT, v.topicIds).length >= slcT.length)
-        )
-      })
-
-      return groups
-    },
     groupById(state, getters){
       return (id) => {
         const group = state.group.data[id]
@@ -105,7 +85,87 @@ export const store = new Vuex.Store({
       }
     },
 
+    groups(state, getters) {
+
+      const allG = getters.allGroups
+      const slcC = state.canton.selected
+      const slcI = state.institution.selected
+      const slcH = state.head.selected
+      const slcT = state.topic.selected
+
+      let groups = []
+      const tempC = {}
+      let cantons = []
+      const tempI = {}
+      let institutions = []
+      const tempH = {}
+      let heads = []
+      const tempT = {}
+      let topics = []
+
+
+      if(slcC.length === 0 && slcI.length === 0 && slcH.length === 0 && slcT.length === 0){
+
+        groups = allG
+        cantons = state.canton.list
+        institutions = state.institution.list
+        heads = state.head.list
+        topics = state.topic.list
+
+      } else {
+
+        allG.forEach((v) => {
+          const checkCanton = (slcC.length === 0 || slcC.indexOf(v.cantonId) != -1)
+          const checkInstitution = (slcI.length === 0 || slcI.indexOf(v.institutionId) != -1)
+          const checkHead = (slcH.length === 0 || intersect(slcH, v.headIds).length > 0)
+          const checkTopic = (slcT.length === 0 || intersect(slcT, v.topicIds).length >= slcT.length)
+
+          if(checkCanton && checkInstitution && checkHead && checkTopic){
+            groups.push(v)
+
+            v.topicIds.forEach(id => {
+              if(!tempT[id]){
+                tempT[id] = true
+                topics.push(id)
+              }
+            })
+          }
+
+          if(checkInstitution && checkHead && checkTopic){
+            if(!tempC[v.cantonId]){
+              tempC[v.cantonId] = true
+              cantons.push(v.cantonId)
+            }
+          }
+
+          if(checkCanton && checkHead && checkTopic){
+            if(!tempI[v.institutionId]){
+              tempI[v.institutionId] = true
+              institutions.push(v.institutionId)
+            }
+          }
+
+          if(checkCanton && checkInstitution && checkTopic){
+            v.headIds.forEach(id => {
+              if(!tempH[id]){
+                tempH[id] = true
+                heads.push(id)
+              }
+            })
+          }
+        })
+      }
+
+      Vue.set(state.institution, 'available', institutions)
+      Vue.set(state.canton, 'available', cantons)
+      Vue.set(state.head, 'available', heads)
+      Vue.set(state.topic, 'available', topics)
+
+      return groups
+    },
+
     groupsAvailable(state, getters){
+
       let groups = getters.groups
       const slcB = state.bounds
 
@@ -115,7 +175,6 @@ export const store = new Vuex.Store({
           (v.coords.lng <= slcB.ne[1] && v.coords.lng >= slcB.sw[1])
         )
       })
-
       return groups
     }
   }
