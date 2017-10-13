@@ -58,6 +58,11 @@
             callback({
               results: this.options.filter(o => {
                 return o.name.toLowerCase().indexOf(query) !== -1
+              }).map(o => {
+                return {
+                  id: o.id,
+                  name: o.main ? `<strong>${o.name}</strong>` : o.name
+                }
               })
             })
           },
