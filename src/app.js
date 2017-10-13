@@ -2,12 +2,14 @@ import Vue from 'vue'
 
 import App from './components/App.vue'
 import { store } from './store.js'
+import { eventHub } from './eventHub.js'
 import './data.js'
 
 import './index.html'
 
 import 'semantic-ui-less/definitions/modules/transition.js'
 import 'semantic-ui-less/definitions/modules/dropdown.js'
+import 'semantic-ui-less/definitions/behaviors/api.js'
 
 //import 'leaflet/dist/leaflet.js'
 import 'leaflet.markercluster/dist/leaflet.markercluster.js'
@@ -21,9 +23,6 @@ import './data/language.de.json'
 import './data/language.fr.json'
 import './data/language.it.json'
 import './data/language.en.json'
-
-
-const eventHub = new Vue()
 
 Vue.mixin({
   data: function () {

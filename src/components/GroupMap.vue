@@ -28,10 +28,8 @@
 
         const markers = []
         const groups = this.$store.getters.groups
-        const l = groups.length
 
-        for(let i = 0; i < l; i++){
-          const group = groups[i]
+        groups.forEach(group => {
           if(this.markers[group.id]) {
             markers.push(this.markers[group.id])
           } else {
@@ -41,7 +39,7 @@
             this.markers[group.id] = marker
             markers.push(marker)
           }
-        }
+        })
 
         this.clusterGroup.addLayers(markers)
         this.map.setMinZoom(minZoom)
@@ -217,11 +215,13 @@
       this.initPopup()
       this.initCluster()
 
-      this.eventHub.$on('locate', id => {
+
+      this.eventHub.$on('map-locate', id => {
         this.locate(id)
       })
 
       this.refresh()
+
       this.watcher = this.$store.watch((state, getters) => { return getters.groups }, (value) => {
         this.refresh()
         this.zoomToBounds()
@@ -229,6 +229,7 @@
     },
     destroyed: function(){
       this.watcher()
+      this.eventHub.$off('map-refresh')
       this.eventHub.$off('locate')
     },
     updated: function(){

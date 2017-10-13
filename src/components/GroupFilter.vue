@@ -6,10 +6,10 @@
       <input type="hidden" ref="input">
       <i class="dropdown icon"></i>
       <div class="text"></div>
-      <div class="menu">
-        <div v-for="option in options" :key="`${label}.${option.id}`" :class="[option.main ? 'bold' : '', 'item']" :data-value="option.id">
+      <div class="menu" ref="menu">
+        <!--<div v-for="option in options" :key="`${label}.${option.id}`" :class="[option.main ? 'bold' : '', 'item']" :data-value="option.id">
           {{ option.name }}
-        </div>
+        </div>-->
       </div>
     </div>
 
@@ -22,7 +22,7 @@
 
   export default {
     name: 'group-filter',
-    props: ['data','label', 'icon', 'fulltext'],
+    props: ['data','label', 'icon'],
     data: function(){
       return {
         watcher: null,
@@ -44,12 +44,27 @@
         return this.options < 1
       },
       options(){
+        const amount = this.amountToShow
         return this.data.sort(sortLocale('name'))
       }
     },
+
     mounted: function(){
-      const opts = {}
-      if(this.fulltext) opts.fullTextSearch = true
+      const opts = {
+        fields: { name: "name", value: "id" },
+        apiSettings: {
+          responseAsync: (opt, callback) => {
+            callback({
+              results: this.options.filter(o => {
+                return o.name.match(new RegExp(`${opt.urlData.query}`, 'i'))
+              })
+            })
+          },
+          cache: false,
+          filterRemoteData: true,
+          saveRemoteData: false
+        }
+      }
       opts.onChange = (value, text, $choice) => {
         setHashParams(this.label, value)
       }

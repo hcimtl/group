@@ -26,8 +26,6 @@
 </template>
 
 <script>
-  import { sortLocale } from './../util.js'
-
   export default {
     name: 'group-list-item',
     props: ['group'],
@@ -42,7 +40,7 @@
     },
     methods: {
       locate(id){
-        this.eventHub.$emit('locate', id)
+        this.eventHub.$emit('map-locate', id)
       }
     }
   }

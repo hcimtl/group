@@ -70,7 +70,6 @@
       },
       groupsShow(){
         const groups = this.groups.slice(0, this.amountToShow)
-
         return groups;
       }
     },

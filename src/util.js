@@ -99,7 +99,7 @@ function setHashParams(param, values){
   const toAdd = {}
   toAdd[param] = values
   $.extend(params, toAdd)
-  if(window.frameElement) delete params.lang 
+  if(window.frameElement) delete params.lang
 
 
   const hashStrings = []

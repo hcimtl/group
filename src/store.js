@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 import { intersect } from './util.js'
+import { eventHub } from './eventHub.js'
 
 Vue.use(Vuex)
 
@@ -66,11 +67,6 @@ export const store = new Vuex.Store({
     heads({head}){
       return head.available.map(id => head.data[id])
     },
-    allGroups(state, getters) {
-      const lang = state.language.terms
-      const groups = state.group.list.map(id => getters.groupById(id))
-      return groups;
-    },
 
     groupById(state, getters){
       return (id) => {
@@ -85,8 +81,13 @@ export const store = new Vuex.Store({
       }
     },
 
-    groups(state, getters) {
+    allGroups(state, getters) {
+      const lang = state.language.terms
+      const groups = state.group.list.map(id => getters.groupById(id))
+      return groups;
+    },
 
+    groups(state, getters) {
       const allG = getters.allGroups
       const slcC = state.canton.selected
       const slcI = state.institution.selected
@@ -165,7 +166,6 @@ export const store = new Vuex.Store({
     },
 
     groupsAvailable(state, getters){
-
       let groups = getters.groups
       const slcB = state.bounds
 
@@ -175,6 +175,7 @@ export const store = new Vuex.Store({
           (v.coords.lng <= slcB.ne[1] && v.coords.lng >= slcB.sw[1])
         )
       })
+
       return groups
     }
   }

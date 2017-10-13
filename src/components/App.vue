@@ -7,12 +7,12 @@
           <div class="fifteen wide field">
             <div class="two fields">
               <group-filter :data="this.$store.getters.topics" label="topic" icon="tags"></group-filter>
-              <group-filter :data="this.$store.getters.institutions" label="institution" icon="home" fulltext="true"></group-filter>
+              <group-filter :data="this.$store.getters.institutions" label="institution" icon="home"></group-filter>
             </div>
             <transition name="slide">
               <div class="two fields" v-show="extended || forceExtended">
                 <group-filter :data="this.$store.getters.cantons" label="canton" icon="marker"></group-filter>
-                <group-filter :data="this.$store.getters.heads" label="head" icon="user" fulltext="true"></group-filter>
+                <group-filter :data="this.$store.getters.heads" label="head" icon="user"></group-filter>
               </div>
             </transition>
           </div>
