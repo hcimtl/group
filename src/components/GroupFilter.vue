@@ -54,9 +54,10 @@
         fields: { name: "name", value: "id" },
         apiSettings: {
           responseAsync: (opt, callback) => {
+            const query = opt.urlData.query.toLowerCase()
             callback({
               results: this.options.filter(o => {
-                return o.name.match(new RegExp(`${opt.urlData.query}`, 'i'))
+                return o.name.toLowerCase().indexOf(query) !== -1
               })
             })
           },
