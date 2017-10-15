@@ -49,7 +49,7 @@ if((Date.now() - dbDate) < cacheDuration){
         name: r.groupname.trim(),
         headIds: [],
         institutionId: null,
-        departement: r.departement.trim(),
+        department: r.departement.trim(),
         institute: r.institute.trim(),
         cantonId: null,
         street: r.group_street.trim(),

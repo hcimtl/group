@@ -13,8 +13,8 @@
     <div class="description">
       <p>
         <span><strong>{{group.institution}}</strong></span><br>
-        <span v-if="group.institution != group.departement">{{group.departement}} <br></span>
-        <span v-if="group.institution != group.institute && group.departement !== group.institute">{{group.institute}}<br></span>
+        <span v-if="group.institution != group.department">{{group.department}} <br></span>
+        <span v-if="group.institution != group.institute && group.department !== group.institute">{{group.institute}}<br></span>
       </p>
       <div class="ui labels">
         <div v-for="topic in topics" :key="topic.id" :class="[(topic.id == group.mainTopicId) ? 'black' : 'basic', 'ui mini label']">

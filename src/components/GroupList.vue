@@ -110,7 +110,7 @@
             [this.term('research_group')]: group.name,
             [this.term('head')]: group.heads.map(head => head.name).join(', '),
             [this.term('institution')]: group.institution,
-            [this.term('departement')]: group.departement,
+            [this.term('department')]: group.department,
             [this.term('institute')]: group.institute,
             [this.term('canton')]: group.canton,
             [this.term('website')]: group.website,
