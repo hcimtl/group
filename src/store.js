@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import { intersect, setHashParams } from './util.js'
+import { intersect, setHashParams, getHashParams, ajax } from './util.js'
 import { eventHub } from './eventHub.js'
 
 Vue.use(Vuex)
@@ -25,6 +25,7 @@ export const store = new Vuex.Store({
   mutations: {
     setLanguage(state, data) {
       Vue.set(state.language, 'selected', data.data)
+      this.dispatch('loadLanguage')
     },
     setLanguageTerms(state, data){
       Vue.set(state.language, 'terms', data.data)
@@ -178,6 +179,36 @@ export const store = new Vuex.Store({
       })
 
       return groups
+    }
+  },
+  actions: {
+    loadLanguage({ commit, state }){
+      ajax(`./data/language.${state.language.selected}.json`, (data) => {
+        data = JSON.parse(data)
+        commit('setLanguageTerms', { data: data })
+      })
+    },
+    loadHash({ commit, state }){
+      const params = getHashParams()
+      let topics = []
+      let institutions = []
+      let cantons = []
+      let heads = []
+
+      if(params.lang && params.lang != state.language.selected){
+        commit('setLanguage', { data: params.lang })
+      }
+
+      if(params.topic) topics = params.topic.split(',').map(id => parseInt(id))
+      if(params.institution) institutions = params.institution.split(',').map(id => parseInt(id))
+      if(params.canton) cantons = params.canton.split(',').map(id => parseInt(id))
+      if(params.head) heads = params.head.split(',').map(id => parseInt(id))
+
+
+      if(state.topic.selected.toString() != topics.toString()) commit('setSelected', { list: 'topic', data: topics })
+      if(state.institution.selected.toString() != institutions.toString()) commit('setSelected', { list: 'institution', data: institutions })
+      if(state.canton.selected.toString() != cantons.toString()) commit('setSelected', { list: 'canton', data: cantons })
+      if(state.head.selected.toString() != heads.toString()) commit('setSelected', { list: 'head', data: heads })
     }
   }
 })

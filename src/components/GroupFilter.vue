@@ -27,7 +27,7 @@
 
 <script>
 
-  import { sortLocale, setHashParams } from './../util.js'
+  import { sortLocale } from './../util.js'
 
   export default {
     name: 'group-filter',
@@ -132,7 +132,7 @@
     destroyed: function(){
     },
     updated: function(){
-      $(window).trigger('resize')
+      this.eventHub.$emit('app-resize')
     }
   }
 </script>

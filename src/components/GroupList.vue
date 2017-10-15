@@ -139,7 +139,7 @@
       this.watcher2()
     },
     updated: function(){
-      $(window).trigger('resize')
+      this.eventHub.$emit('app-resize')
     }
   }
 </script>

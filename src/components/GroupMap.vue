@@ -233,7 +233,7 @@
       this.eventHub.$off('locate')
     },
     updated: function(){
-      $(window).trigger('resize')
+      this.eventHub.$emit('app-resize')
     }
   }
 </script>

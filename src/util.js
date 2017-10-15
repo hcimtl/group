@@ -85,7 +85,7 @@ function getHashParams(hashString = false) {
 
   if(hashString === false){
     if(window.frameElement){
-      hashParams = $.extend(hashParams, getHashParams(window.parent.location.hash))
+      extend(hashParams, getHashParams(window.parent.location.hash))
     }
   }
 
@@ -103,7 +103,7 @@ function setHashParams(param, values){
   } else {
     delete params[param]
   }
-  $.extend(params, toAdd)
+  extend(params, toAdd)
   if(window.frameElement) delete params.lang
 
 
@@ -115,5 +115,28 @@ function setHashParams(param, values){
   loc.hash = hashStrings.join('&')
 }
 
+// JavaScript equivalent of jQuery's extend method
+// https://stackoverflow.com/questions/11197247/javascript-equivalent-of-jquerys-extend-method
+function extend(){
+  for(var i=1; i<arguments.length; i++)
+    for(var key in arguments[i])
+      if(arguments[i].hasOwnProperty(key))
+        arguments[0][key] = arguments[i][key];
+  return arguments[0];
+}
 
-export { saveAs, sortLocale, intersect, getHashParams, setHashParams }
+// Send Ajax GET requests
+// https://plainjs.com/javascript/ajax/send-ajax-get-and-post-requests-47/
+function ajax(url, success) {
+  var xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+  xhr.open('GET', url);
+  xhr.onreadystatechange = function() {
+      if (xhr.readyState>3 && xhr.status==200) success(xhr.responseText);
+  };
+  xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+  xhr.send();
+  return xhr;
+}
+
+
+export { saveAs, sortLocale, intersect, getHashParams, setHashParams, ajax, extend }

@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" ref="app">
 
     <div class="filter-container">
       <form class="ui form">
@@ -41,7 +41,9 @@
     name: 'app',
     data: function(){
       return {
-        extended: true
+        extended: true,
+        iframeHashUpdater: null,
+        languageWatcher: null
       }
     },
     computed: {
@@ -53,42 +55,76 @@
       toggleExtendedFilter(e){
         e.preventDefault()
         this.extended = !this.extended
+      },
+      resizeIframe(){
+        const extra = 200
+        const height = this.$refs.app.clientHeight
+        window.frameElement.style.height = (height+extra) + 'px'
+      },
+      loadHash(){
+        this.$store.dispatch('loadHash')
+      },
+      loadLanguage(){
+        this.$store.dispatch('loadLanguage')
       }
     },
     components: {
       GroupFilter, GroupMap, GroupList
     },
     mounted: function(){
+      const self = this
       const domain = document.domain.match(/[a-z0-9\-]*.[a-z0-9\-]+$/i)[0]
       document.domain = domain
       const iframe = window.frameElement
-      const extra = 150
 
       if(iframe){
-        $(window).on('resize', () => {
-          const height = $('#app').height()
-          $(window.frameElement).height(height+extra)
+        window.addEventListener('resize', this.resizeIframe)
+        this.eventHub.$on('app-resize', () => {
+          this.resizeIframe()
         })
+
+        this.iframeHashUpdater = window.setInterval(() => {
+          this.loadHash()
+        }, 50)
+      } else {
+        window.addEventListener('hashchange', this.loadHash)
       }
 
-      $(window).one('mousemove', (e) => {
+      this.loadLanguage()
+      this.loadHash()
+
+      window.addEventListener('mousemove', function hideOptions(e){
+        this.removeEventListener('mousemove', hideOptions)
         setTimeout(() => {
-          this.extended = false
+          self.extended = false
         }, 500)
       })
 
       this.eventHub.$on('goToMap', () => {
-        const target = iframe ? window.parent.document : document
-        const top = iframe ? $(iframe).offset().top : 0
-        $(target).scrollTop(top)
+        if(iframe) {
+          const top = iframe.getBoundingClientRect().top + window.parent.window.pageYOffset
+          window.parent.window.scrollTo(0, top)
+        } else {
+          const top = 0
+          window.scrollTo(0, top)
+        }
       })
+
     },
     destroyed: function(){
-      $(window).off('resize')
+      const iframe = window.frameElement
+
       this.eventHub.$off('goToMap')
+      this.eventHub.$off('app-resize')
+
+      window.removeEventListener('hashchange', this.loadHash)
+      if(iframe) {
+        window.removeEventListener('resize', this.resizeIframe)
+        window.clearTimeout(this.iframeHashUpdater)
+      }
     },
     updated: function(){
-      $(window).trigger('resize')
+      this.eventHub.$emit('app-resize')
     }
   }
 </script>
@@ -157,7 +193,5 @@
         }
       }
     }
-
-
   }
 </style>
