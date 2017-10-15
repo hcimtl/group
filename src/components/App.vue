@@ -18,7 +18,7 @@
           </div>
           <div class="field">
             <label class="label-without-content"></label>
-            <button :class="[!extended ? 'basic' : 'basic black', 'ui fluid button icon']" @click="toggleExtendedFilter">
+            <button type="button" :class="[!extended ? 'basic' : 'basic black', 'ui fluid button icon']" @click="toggleExtendedFilter">
               <i :class="[extended ? 'close' : 'options', 'icon']"></i>
             </button>
           </div>

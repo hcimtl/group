@@ -97,7 +97,12 @@ function setHashParams(param, values){
   const loc = window.frameElement ? window.parent.location : window.location
   let params = getHashParams()
   const toAdd = {}
-  toAdd[param] = values
+
+  if(values.length > 0) {
+    toAdd[param] = values
+  } else {
+    delete params[param]
+  }
   $.extend(params, toAdd)
   if(window.frameElement) delete params.lang
 

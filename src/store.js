@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import { intersect } from './util.js'
+import { intersect, setHashParams } from './util.js'
 import { eventHub } from './eventHub.js'
 
 Vue.use(Vuex)
@@ -41,6 +41,7 @@ export const store = new Vuex.Store({
     },
 
     setSelected(state, data){
+      setHashParams(data.list, data.data)
       Vue.set(state[data.list], 'selected', data.data)
     }
   },
