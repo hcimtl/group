@@ -89,11 +89,9 @@ module.exports = {
     ]
   },
   plugins: [
-    new ExtractTextPlugin('bundle.css')/*,
+    new ExtractTextPlugin('bundle.css'),
     new webpack.ProvidePlugin({
-      jQuery: 'jquery/dist/jquery.min',
-      $: 'jquery/dist/jquery.min',
-      Promise: 'bluebird/js/browser/bluebird.core'
-    })*/
+      Promise: 'promise-polyfill'
+    })
   ]
 }

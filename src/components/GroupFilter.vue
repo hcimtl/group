@@ -1,6 +1,6 @@
 <template>
   <div class="eight wide field">
-    <label><i v-bind:class="[icon, 'icon']"></i> <span>{{ title }}</span></label>
+    <label><i :class="[icon, 'icon']"></i> <span>{{ title }}</span></label>
 
     <div tabindex="-1" ref="dropdown" :class="[isLoading ? 'loading':'', active ? 'active visible':'', 'ui fluid multiple search selection dropdown']" @focus="setActive()">
       <i class="dropdown icon"></i>

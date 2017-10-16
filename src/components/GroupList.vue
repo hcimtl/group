@@ -10,14 +10,23 @@
     </div>
     <div class="ui vertical segment clearing right aligned small-padding">
       <span>{{ term('sort_by') }} </span>
-      <div class="ui inline dropdown" ref="filter">
-        <div class="text"></div>
-        <div class="menu"></div>
+      <div class="ui inline dropdown" @focus="setActive()" @click="setActive()" @blur="setInactive()" @keydown="sortKeyNav($event)" tabindex="0">
+        <div class="text">{{ term(sortOptions[sortIndex].label) }}</div>
+        <div :class="[sortSelectionActive ? 'active visible':'','menu left']">
+          <div v-for="(option, index) in sortOptions"
+            :key="`sort.option.${option.label}`"
+            :class="[option.label == sortOptions[sortIndex].label ? 'active selected':'', 'item']"
+            @click="sortBy(index)">
+
+            {{ term(option.label) }}
+
+          </div>
+        </div>
         <i class="dropdown icon"></i>
       </div>
     </div>
 
-    <group-list-item v-for="group in groupsShow" :key="group.id" v-bind:group="group"></group-list-item>
+    <group-list-item v-for="group in groupsShow" :key="`group.list.${group.id}`" v-bind:group="group"></group-list-item>
 
     <div v-if="isLoading" class="ui vertical segment basic">
       <div class="ui active centered inline loader small"></div>
@@ -37,6 +46,7 @@
 <script>
   import GroupListItem from './GroupListItem.vue'
   import { saveAs, sortLocale } from './../util.js'
+  import Papa from 'papaparse'
 
   export default {
     name: 'group-list',
@@ -44,15 +54,23 @@
     props: [],
     data: function(){
       return {
-        sort: 'group',
-        sort_options: {
-          group: 'name',
-          institution: 'institution',
-          head: { type: 'array', key: ['heads', 0, 'name']}
-        },
-        amountToShow: 10,
-        watcher: null,
-        watcher2: null
+        sortIndex: 0,
+        sortSelectionActive: false,
+        sortOptions: [
+          {
+            label: 'group',
+            sort_key: 'name',
+          },
+          {
+            label: 'institution',
+            sort_key: 'institution',
+          },
+          {
+            label: 'head',
+            sort_key: { type: 'array', key: ['heads', 0, 'name']},
+          }
+        ],
+        amountToShow: 10
       }
     },
     computed: {
@@ -64,8 +82,9 @@
       },
       groups(){
         let groups = this.$store.getters.groupsAvailable;
-        const key = this.sort_options[this.sort]
+        const key = this.sortOptions[this.sortIndex].sort_key
         groups = groups.sort(sortLocale(key))
+        this.amountToShow = 10
         return groups
       },
       groupsShow(){
@@ -77,29 +96,27 @@
       term(term){
         return this.$store.getters.term(term)
       },
-      sortBy(term){
-        this.sort = term
+      sortKeyNav(e){
+        e.preventDefault()
+        if(e.which === 38) {
+          if(this.sortIndex > 0) this.sortIndex--
+        } else if(e.which === 40){
+          if(this.sortIndex < this.sortOptions.length-1) this.sortIndex++
+        } else if(e.which === 13 || e.which === 27){
+          this.setInactive()
+        }
+      },
+      setActive(){
+        this.sortSelectionActive = true
+      },
+      setInactive(){
+        this.sortSelectionActive = false
+      },
+      sortBy(index){
+        this.sortIndex = index
       },
       showMore(){
         this.amountToShow += 10
-      },
-      refreshFilter(){
-        const values = []
-        for(let option in this.sort_options){
-          const opt = this.sort_options[option]
-          const value = {}
-          value.name = this.term(option)
-          value.value = option
-          if(option == this.sort) value.selected = true
-          values.push(value)
-        }
-
-        $(this.$refs.filter).dropdown({
-          values: values,
-          onChange: (value) => {
-            this.sort = value
-          }
-        })
       },
       exportData(){
         const groupsLength = this.groups.length
@@ -119,24 +136,14 @@
           table.push(row)
         }
 
-        const csv = $.csv.fromObjects(table, { separator: ';' })
+        const csv = Papa.unparse(table, {
+          quotes: false,
+          delimiter: ";"
+        })
 
         const blob = new Blob([`\ufeff${csv}\r\n${this.term('source_message')}`], {type: "text/csv;charset=ANSI"})
         saveAs(blob, `${this.term('export_name')}.csv`);
       }
-    },
-    mounted: function(){
-      this.refreshFilter()
-      this.watcher = this.$store.watch((state, getters) => { return state.language.terms }, value => {
-        this.refreshFilter()
-      })
-      this.watcher2 = this.$store.watch((state, getters) => { return getters.groupsAvailable }, value => {
-        this.amountToShow = 10
-      })
-    },
-    destroyed: function(){
-      this.watcher()
-      this.watcher2()
     },
     updated: function(){
       this.eventHub.$emit('app-resize')

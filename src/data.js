@@ -1,5 +1,7 @@
 import { store } from './store.js'
-import 'jquery-csv'
+import { ajax } from './util.js'
+import Papa from 'papaparse'
+
 
 const dbDate = localStorage.getItem('dbDate')
 const cacheDuration = (1000*60*60*24*3) // 3 days
@@ -20,11 +22,9 @@ if((Date.now() - dbDate) < cacheDuration){
 
 } else {
 
-  $.ajax({
-    method: 'GET',
-    url: './data/bafu_umwelt_fgrps_db.csv',
-  }).done(function(data) {
-    const database = $.csv.toObjects(data)
+  ajax('./data/bafu_umwelt_fgrps_db.csv', (data) => {
+    const parsedCSV= Papa.parse(data, { header: true, dynamicTyping: true, skipEmptyLines: true })
+    const database = parsedCSV.data
 
     let cantonIndex = 0
     let institutionIndex = 0
@@ -53,11 +53,12 @@ if((Date.now() - dbDate) < cacheDuration){
         cantonId: null,
         street: r.group_street.trim(),
         city: r.group_city.trim(),
-        zip: r.group_zip.trim(),
+        zip: r.group_zip,
         website: r.group_website.replace('#', ''),
         coords: { lat: r.group_xcoord, lng: r.group_ycoord },
         topicIds: []
       }
+
 
       r.canton = r.canton.trim()
       if(!cantonArray[r.cantonID]) {
