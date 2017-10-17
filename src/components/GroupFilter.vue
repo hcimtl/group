@@ -17,7 +17,7 @@
           <div v-for="opt in options" :key="`opt.${label}.${opt.id}`" :class="[opt.main ? 'bold' : '', opt.id === options[index].id ? 'selected':'','item']" :data-value="opt.id" @click="addSelected(opt.id)">
             {{ opt.name }}
           </div>
-          <div v-if="options.length < 1" class="message">No results found.</div>
+          <div v-if="options.length < 1" class="message">{{ noResults }}</div>
         </template>
       </div>
     </div>
@@ -86,6 +86,9 @@
     computed: {
       title(){
         return this.$store.getters.term(this.label)
+      },
+      noResults(){
+        return this.$store.getters.term('no_results')
       },
       isLoading(){
         return this.$store.state[this.label].list < 1
