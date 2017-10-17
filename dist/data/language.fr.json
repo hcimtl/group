@@ -11,7 +11,7 @@
   "sort_by": "Classification par",
   "export": "Export des résultats",
   "show_more": "Plus",
-  "no_results": "Aucun résultat correspondant à vos critères",
+  "no_results": "Aucun résultat trouvé.",
   "export_name": "groupes_de_recherche_sur_l_environnement",
   "source_message": "La liste de groupes de recherche suivante  est basé sur une réquête réalisée sur la base de données de la recherche environnementale publiée par l'office fédéral suisse de l'environnement OFEV. Veuillez s'il vous plaît mentionner l'office fédéral suisse de l'environnement pour toute utilisation de ces données."
 }
