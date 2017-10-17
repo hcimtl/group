@@ -54,7 +54,7 @@ if((Date.now() - dbDate) < cacheDuration){
         street: r.group_street.trim(),
         city: r.group_city.trim(),
         zip: r.group_zip,
-        website: r.group_website.replace('#', ''),
+        website: r.group_website.replace(/(^#)|(#$)/g, ''),
         coords: { lat: r.group_xcoord, lng: r.group_ycoord },
         topicIds: []
       }
