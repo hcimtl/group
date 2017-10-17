@@ -218,7 +218,7 @@
 
       this.eventHub.$on('map-locate', id => {
         this.locate(id)
-      })
+      })      
 
       this.refresh()
 
@@ -266,6 +266,12 @@
 
           .segment {
             padding: 0;
+
+            .header, .content {
+              @media (max-width: 768px){
+                font-size: 0.7em;
+              }
+            }
 
             p {
               margin: 0.25em 0;
