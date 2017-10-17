@@ -10,8 +10,8 @@
     </div>
     <div class="ui vertical segment clearing right aligned small-padding">
       <span>{{ term('sort_by') }} </span>
-      <div class="ui inline dropdown" @focus="setActive()" @click="setActive()" @blur="setInactive()" @keydown="sortKeyNav($event)" tabindex="0">
-        <div class="text">{{ term(sortOptions[sortIndex].label) }}</div>
+      <div class="ui inline dropdown" @focus="setActive()" @blur="setInactive()" @keydown="sortKeyNav($event)" tabindex="0">
+        <div class="text" @click="setActive()">{{ term(sortOptions[sortIndex].label) }}</div>
         <div :class="[sortSelectionActive ? 'active visible':'','menu left']">
           <div v-for="(option, index) in sortOptions"
             :key="`sort.option.${option.label}`"
@@ -97,23 +97,26 @@
         return this.$store.getters.term(term)
       },
       sortKeyNav(e){
-        e.preventDefault()
         if(e.which === 38) {
+          e.preventDefault()
           if(this.sortIndex > 0) this.sortIndex--
         } else if(e.which === 40){
+          e.preventDefault()
           if(this.sortIndex < this.sortOptions.length-1) this.sortIndex++
         } else if(e.which === 13 || e.which === 27){
+          e.preventDefault()
           this.setInactive()
         }
       },
       setActive(){
-        this.sortSelectionActive = true
+        if(!this.sortSelectionActive) this.sortSelectionActive = true
       },
       setInactive(){
         this.sortSelectionActive = false
       },
       sortBy(index){
         this.sortIndex = index
+        this.setInactive()
       },
       showMore(){
         this.amountToShow += 10
