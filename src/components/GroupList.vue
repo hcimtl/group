@@ -37,7 +37,7 @@
     </div>
 
     <div v-if="numGroups > groupsShow.length" class="ui vertical center aligned segment basic very padded">
-      <button class="ui button primary icon centered" @click="showMore()">{{term('show_more')}}</button>
+      <button class="ui button primary icon centered" @click="showMore()">{{ showMoreTerm }}</button>
     </div>
 
   </div>
@@ -70,7 +70,8 @@
             sort_key: { type: 'array', key: ['heads', 0, 'name']},
           }
         ],
-        amountToShow: 10
+        amountToShow: 15,
+        amountToAdd: 15
       }
     },
     computed: {
@@ -84,12 +85,19 @@
         let groups = this.$store.getters.groupsAvailable;
         const key = this.sortOptions[this.sortIndex].sort_key
         groups = groups.sort(sortLocale(key))
-        this.amountToShow = 10
+        this.amountToShow = this.amountToAdd
         return groups
       },
       groupsShow(){
         const groups = this.groups.slice(0, this.amountToShow)
         return groups;
+      },
+      showMoreTerm(){
+        let term = this.term('show_more')
+        const numTemp = this.amountToShow+this.amountToAdd;
+        term = term.replace('[amount]', numTemp < this.numGroups ? numTemp : this.numGroups)
+        term = term.replace('[total]', this.numGroups)
+        return term
       }
     },
     methods: {
@@ -119,7 +127,7 @@
         this.setInactive()
       },
       showMore(){
-        this.amountToShow += 10
+        this.amountToShow += this.amountToAdd
       },
       exportData(){
         const groupsLength = this.groups.length
@@ -164,6 +172,24 @@
     }
     .ui.segment.small-padding {
       padding: 0.25em 0;
+    }
+    .ui.button.borderless {
+      box-shadow: none !important;
+      border: none !important;
+      background: none;
+      padding: 0;
+      color: #069;
+    }
+
+    .ui.labels {
+      .label {
+        font-weight: normal;
+        font-size: 0.925em;
+
+        &.bold {
+          font-weight: bold;
+        }
+      }
     }
   }
 </style>
