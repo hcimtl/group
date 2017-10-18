@@ -29,6 +29,12 @@
     <group-map></group-map>
     <group-list></group-list>
 
+    <div class="ui segment basic" style="text-align: center;">
+      <a href="https://creativecommons.org/licenses/by/3.0/ch/" target="_blank">
+        <img src="./../assets/cc_logo.svg" style="width: 100px">
+      </a>
+    </div>
+
   </div>
 </template>
 
