@@ -37,7 +37,7 @@
     </div>
 
     <div v-if="numGroups > groupsShow.length" class="ui vertical center aligned segment basic very padded">
-      <button class="ui button primary icon centered" @click="showMore()">{{ showMoreTerm }}</button>
+      <button class="ui button primary icon centered thin" @click="showMore()" v-html="showMoreTerm"></button>
     </div>
 
   </div>
@@ -95,8 +95,9 @@
       showMoreTerm(){
         let term = this.term('show_more')
         const numTemp = this.amountToShow+this.amountToAdd;
-        term = term.replace('[amount]', numTemp < this.numGroups ? numTemp : this.numGroups)
-        term = term.replace('[total]', this.numGroups)
+        const numTotal = this.numGroups
+        term = term.replace('[amount]', numTemp < numTotal ? `<strong>${numTemp}</strong>` : `<strong>${numTotal}</strong>`)
+        term = term.replace('[total]', `<strong>${numTotal}</strong>`)
         return term
       }
     },
@@ -173,12 +174,8 @@
     .ui.segment.small-padding {
       padding: 0.25em 0;
     }
-    .ui.button.borderless {
-      box-shadow: none !important;
-      border: none !important;
-      background: none;
-      padding: 0;
-      color: #069;
+    .ui.button.thin {
+      font-weight: normal;
     }
 
     .ui.labels {
