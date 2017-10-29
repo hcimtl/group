@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import Papa from 'papaparse'
 
 import { intersect, setHashParams, getHashParams, ajax } from './util.js'
 import { eventHub } from './eventHub.js'
@@ -20,7 +21,8 @@ export const store = new Vuex.Store({
     bounds: {
       ne: [47.933243004813725, 10.575639903386495],
       sw: [45.639066961601685, 5.883893951813307]
-    }
+    },
+    cacheDuration: 0//(1000*60*60*24*3) // 3 days
   },
   mutations: {
     setLanguage(state, data) {
@@ -187,6 +189,126 @@ export const store = new Vuex.Store({
         data = JSON.parse(data)
         commit('setLanguageTerms', { data: data })
       })
+    },
+    loadGroups({ commit, state }){
+      const dbDate = localStorage.getItem('dbDate')
+      const dbGroupArray = localStorage.getItem('groupArray')
+
+      if((Date.now() - dbDate) < state.cacheDuration && dbGroupArray){
+        commit('setData', { list: 'group', data: JSON.parse(dbGroupArray) })
+      } else {
+        ajax('./data/groups.csv', (data) => {
+          const parsedCSV = Papa.parse(data, { header: true, skipEmptyLines: true })
+          const groupArray = parsedCSV.data.map(group => {
+            return {
+              id: parseInt(group.id),
+              name: group.name.trim(),
+              headIds: group.headIds ? group.headIds.toString().split(',').map(id => parseInt(id)) : [],
+              institutionId: parseInt(group.institutionId),
+              department: group.department.trim(),
+              institute: group.institute.trim(),
+              cantonId: parseInt(group.cantonId),
+              street: group.street.trim(),
+              city: group.city,
+              zip: group.zip,
+              website: group.website.trim(),
+              mainTopicId: parseInt(group.mainTopicId),
+              coords: { lat: parseFloat(group.lat), lng: parseFloat(group.lng) },
+              topicIds: group.topicIds ? group.topicIds.toString().split(',').map(id => parseInt(id)) : []
+            }
+          })
+          commit('setData', { list: 'group', data: groupArray })
+          localStorage.setItem('groupArray', JSON.stringify(groupArray))
+          localStorage.setItem('dbDate', Date.now())
+        })
+      }
+    },
+    loadTopics({ commit, state }){
+      const dbDate = localStorage.getItem('dbDate')
+      const dbTopicArray = localStorage.getItem('topicArray')
+      if((Date.now() - dbDate) < state.cacheDuration && dbTopicArray){
+        commit('setData', { list: 'topic', data: JSON.parse(dbTopicArray) })
+      } else {
+        ajax('./data/topics.csv', (data) => {
+          const parsedCSV = Papa.parse(data, { header: true, skipEmptyLines: true })
+          const topicArray = parsedCSV.data.map(topic => {
+            return {
+              id: parseInt(topic.id),
+              de: topic.de.trim(),
+              fr: topic.fr.trim(),
+              it: topic.it.trim(),
+              en: topic.en.trim(),
+              main: !!parseInt(topic.main)
+            }
+          })
+          commit('setData', { list: 'topic', data: topicArray })
+          localStorage.setItem('topicArray', JSON.stringify(topicArray))
+          localStorage.setItem('dbDate', Date.now())
+        })
+      }
+    },
+    loadCantons({ commit, state }){
+      const dbDate = localStorage.getItem('dbDate')
+      const dbCantonArray = localStorage.getItem('cantonArray')
+      if((Date.now() - dbDate) < state.cacheDuration && dbCantonArray){
+        commit('setData', { list: 'canton', data: JSON.parse(dbCantonArray) })
+      } else {
+        ajax('./data/cantons.csv', (data) => {
+          const parsedCSV = Papa.parse(data, { header: true, skipEmptyLines: true })
+          const cantonArray = parsedCSV.data.map(canton => {
+            return {
+              id: parseInt(canton.id),
+              name: canton.name.trim(),
+              short: canton.short.trim()
+            }
+          })
+          commit('setData', { list: 'canton', data: cantonArray })
+          localStorage.setItem('cantonArray', JSON.stringify(cantonArray))
+          localStorage.setItem('dbDate', Date.now())
+        })
+      }
+    },
+    loadHeads({ commit, state }){
+      const dbDate = localStorage.getItem('dbDate')
+      const dbHeadArray = localStorage.getItem('headArray')
+      if((Date.now() - dbDate) < state.cacheDuration && dbHeadArray){
+        commit('setData', { list: 'head', data: JSON.parse(dbHeadArray) })
+      } else {
+        ajax('./data/persons.csv', (data) => {
+          const parsedCSV = Papa.parse(data, { header: true, skipEmptyLines: true })
+          const headArray = parsedCSV.data.map(head => {
+            return {
+              id: parseInt(head.id),
+              name: head.name.trim()
+            }
+          })
+
+          commit('setData', { list: 'head', data: headArray })
+          localStorage.setItem('headArray', JSON.stringify(headArray))
+          localStorage.setItem('dbDate', Date.now())
+        })
+      }
+    },
+    loadInstitutions({ commit, state }){
+      const dbDate = localStorage.getItem('dbDate')
+      const dbInstitutionArray = localStorage.getItem('institutionArray')
+      if((Date.now() - dbDate) < state.cacheDuration && dbInstitutionArray){
+        commit('setData', { list: 'institution', data: JSON.parse(dbInstitutionArray) })
+      } else {
+        ajax('./data/institutions.csv', (data) => {
+          const parsedCSV = Papa.parse(data, { header: true, skipEmptyLines: true })
+          const institutionArray = parsedCSV.data.map(institution => {
+            return {
+              id: parseInt(institution.id),
+              name: institution.name.trim(),
+              short: institution.short.trim()
+            }
+          })
+          commit('setData', { list: 'institution', data: institutionArray })
+          localStorage.setItem('institutionArray', JSON.stringify(institutionArray))
+          localStorage.setItem('dbDate', Date.now())
+        })
+      }
     },
     loadHash({ commit, state }){
       const params = getHashParams()
