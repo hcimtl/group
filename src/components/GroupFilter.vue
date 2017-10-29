@@ -95,7 +95,9 @@
       },
       options(){
         const amount = this.amountToShow
-        const options = this.data.sort(sortLocale('name')).filter((o) => { return this.$store.state[this.label].selected.indexOf(o.id) === -1 && o.name.toLowerCase().indexOf(this.query) !== -1 }).slice(0, amount)
+        const options = this.data.sort(sortLocale('name')).filter((o) => {
+          return this.$store.state[this.label].selected.indexOf(o.id) === -1 && o.name.toLowerCase().indexOf(this.query) !== -1
+        }).slice(0, amount)
         return options
       },
       selected: {
