@@ -66,16 +66,19 @@
         const extra = 200
         const height = this.$refs.app.clientHeight
         window.frameElement.style.height = (height+extra) + 'px'
-      },
-      loadHash(){
-        this.$store.dispatch('loadHash')
-      },
-      loadLanguage(){
-        this.$store.dispatch('loadLanguage')
       }
     },
     components: {
       GroupFilter, GroupMap, GroupList
+    },
+    created: function(){
+      this.$store.dispatch('loadLanguage')
+      this.$store.dispatch('loadHash')
+      this.$store.dispatch('loadGroups')
+      this.$store.dispatch('loadTopics')
+      this.$store.dispatch('loadHeads')
+      this.$store.dispatch('loadInstitutions')
+      this.$store.dispatch('loadCantons')
     },
     mounted: function(){
       const self = this
@@ -90,14 +93,14 @@
         })
 
         this.iframeHashUpdater = window.setInterval(() => {
-          this.loadHash()
+          this.$store.dispatch('loadHash')
         }, 50)
       } else {
-        window.addEventListener('hashchange', this.loadHash)
+        window.addEventListener('hashchange', () => {
+          this.$store.dispatch('loadHash')
+        })
       }
 
-      this.loadLanguage()
-      this.loadHash()
 
       window.addEventListener('mousemove', function hideOptions(e){
         this.removeEventListener('mousemove', hideOptions)
