@@ -10,7 +10,7 @@
   "group": "Gruppo",
   "sort_by": "Ordinare per",
   "export": "Esportazione risultati",
-  "show_more": "Mostra altro",
+  "show_more": "Mostrano [amount] di [total] gruppi",
   "no_results": "Nessun risultato trovato.",
   "export_name": "gruppi_di_ricerca_ambientale",
   "source_message": "La sottostante lista dei gruppi di ricerca deriva di una base di dati pubblica dell Ufficio federale dell'ambiente UFAM. Si prega di citare l' Ufficio federale dell'ambiente UFAM per qualsiasi uso di questa base di dati."
