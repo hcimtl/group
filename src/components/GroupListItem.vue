@@ -35,6 +35,7 @@
     computed: {
       topics(){
         const terms = this.$store.state.language.terms
+        const tops = this.$store.getters.topics
         return this.group.topics.sort((a,b) => { return a.id == this.group.mainTopicId ? -1 : 1 })
       }
     },
