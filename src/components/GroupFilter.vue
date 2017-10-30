@@ -6,7 +6,7 @@
       <i class="dropdown icon"></i>
 
       <a v-for="sel in selectedWidthInfo" :key="`sel.${label}.${sel.id}`" class="ui label large transition visible" :data-value="sel.id">
-        {{sel.name}}<i class="delete icon" @click="removeSelected(sel.id)"></i>
+        {{sel.name}} <span v-if="sel.short">({{sel.short}})</span><i class="delete icon" @click="removeSelected(sel.id)"></i>
       </a>
 
       <input class="search" autocomplete="off" tabindex="0" v-model="query" ref="input" @focus="setActive()" @blur="setInactive($event)" @keyup="addFirstSelected($event)">
@@ -15,7 +15,7 @@
       <div v-show="active" class="menu active visible" ref="menu">
         <template v-if="active">
           <div v-for="opt in options" :key="`opt.${label}.${opt.id}`" :class="[opt.main ? 'bold' : '', opt.id === options[index].id ? 'selected':'','item']" :data-value="opt.id" @click="addSelected(opt.id)">
-            {{ opt.name }}
+            {{ opt.name }} <span v-if="opt.short">({{opt.short}})</span>
           </div>
           <div v-if="options.length < 1" class="message">{{ noResults }}</div>
         </template>
@@ -27,7 +27,7 @@
 
 <script>
 
-  import { sortLocale } from './../util.js'
+  import { sortLocale, accentFold } from './../util.js'
 
   export default {
     name: 'group-filter',
@@ -96,7 +96,13 @@
       options(){
         const amount = this.amountToShow
         const options = this.data.sort(sortLocale('name')).filter((o) => {
-          return this.$store.state[this.label].selected.indexOf(o.id) === -1 && o.name.toLowerCase().indexOf(this.query) !== -1
+          const name = accentFold(o.name.toLowerCase())
+          const short = o.short ? accentFold(o.short.toLowerCase()) : ""
+          const query = accentFold(this.query.toLowerCase())
+
+          return (
+            (this.$store.state[this.label].selected.indexOf(o.id) === -1) &&
+            (name.indexOf(query) !== -1 || short.indexOf(query) !== -1))
         }).slice(0, amount)
         return options
       },
@@ -112,7 +118,12 @@
         }
       },
       selectedWidthInfo() {
-        return this.selected.map((id) => this.$store.state[this.label].data[id])
+        if(!this.isLoading){
+          const options = this.options
+          return this.selected.map((id) => this.$store.state[this.label].data[id])
+        } else {
+          return []
+        }
       }
     },
 
