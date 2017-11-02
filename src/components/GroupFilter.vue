@@ -1,6 +1,9 @@
 <template>
   <div class="eight wide field">
-    <label><i :class="[icon, 'icon']"></i> <span>{{ title }}</span></label>
+    <label>
+      <i :class="[icon, 'icon']"></i> <span>{{ title }}</span>
+      <i v-if="label === 'topic'" class="question circle link primary icon" style="color: #069; vertical-align: super; line-height: 0;" @click="openTopicHelp"></i>
+    </label>
 
     <div tabindex="-1" ref="dropdown" :class="[isLoading ? 'loading':'', active ? 'active visible':'', 'ui fluid multiple search selection dropdown']" @focus="setActive()">
       <i class="dropdown icon"></i>
@@ -41,6 +44,9 @@
       }
     },
     methods: {
+      openTopicHelp(){
+        open(`./topics.html#${this.$store.state.language.selected}`, '_blank', 'scrollbars=yes,height=600,width=450, left=30, top=30')
+      },
       addFirstSelected(e){
         if(e.which === 13){
           if(this.options.length > 0) this.addSelected(this.options[this.index].id)
