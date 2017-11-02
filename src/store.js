@@ -22,7 +22,7 @@ export const store = new Vuex.Store({
       ne: [47.933243004813725, 10.575639903386495],
       sw: [45.639066961601685, 5.883893951813307]
     },
-    cacheDuration: 0//(1000*60*60*24*3) // 3 days
+    cacheDuration: (1000*60*60*24*3) // 3 days
   },
   mutations: {
     setLanguage(state, data) {
@@ -188,6 +188,7 @@ export const store = new Vuex.Store({
       ajax(`./data/language.${state.language.selected}.json`, (data) => {
         data = JSON.parse(data)
         commit('setLanguageTerms', { data: data })
+        document.title = data.title
       })
     },
     loadGroups({ commit, state }){
