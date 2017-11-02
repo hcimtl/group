@@ -71,7 +71,7 @@
     components: {
       GroupFilter, GroupMap, GroupList
     },
-    created: function(){
+    mounted: function(){
       this.$store.dispatch('loadLanguage')
       this.$store.dispatch('loadHash')
       this.$store.dispatch('loadGroups')
@@ -79,8 +79,7 @@
       this.$store.dispatch('loadHeads')
       this.$store.dispatch('loadInstitutions')
       this.$store.dispatch('loadCantons')
-    },
-    mounted: function(){
+
       const self = this
       const domain = document.domain.match(/[a-z0-9\-]*.[a-z0-9\-]+$/i)[0]
       document.domain = domain
