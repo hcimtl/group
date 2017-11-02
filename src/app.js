@@ -5,6 +5,7 @@ import { store } from './store.js'
 import { eventHub } from './eventHub.js'
 
 import './index.html'
+import './topics.html'
 
 import 'leaflet.markercluster/dist/leaflet.markercluster.js'
 import 'leaflet.markercluster/dist/MarkerCluster.css';
