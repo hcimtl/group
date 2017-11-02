@@ -83,7 +83,13 @@ function getHashParams(hashString = false) {
   while (e = r.exec(q))
    hashParams[d(e[1])] = d(e[2]);
 
-  if(hashString === false){
+  var ready = true
+  try {
+    window.frameElement
+  } catch(err) {
+    ready = false
+  }
+  if(hashString === false && ready){
     if(window.frameElement){
       extend(hashParams, getHashParams(window.parent.location.hash))
     }
