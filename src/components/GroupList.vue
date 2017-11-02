@@ -36,8 +36,12 @@
       <div class="ui compact message">{{term('no_results')}}</div>
     </div>
 
-    <div v-if="numGroups > groupsShow.length" class="ui vertical center aligned segment basic very padded">
-      <button class="ui button primary icon centered thin" @click="showMore()" v-html="showMoreTerm"></button>
+    <div class="ui vertical center aligned segment basic ">
+      <div v-html="showMoreHintTerm"></div>
+    </div>
+
+    <div v-if="numGroups > groupsShow.length" class="ui vertical center aligned segment basic">
+      <button class="ui button primary icon centered thin" @click="showMore()">{{ term('show_more') }}</button>
     </div>
 
   </div>
@@ -92,9 +96,9 @@
         const groups = this.groups.slice(0, this.amountToShow)
         return groups;
       },
-      showMoreTerm(){
-        let term = this.term('show_more')
-        const numTemp = this.amountToShow+this.amountToAdd;
+      showMoreHintTerm(){
+        let term = this.term('show_more_hint')
+        const numTemp = this.amountToShow;
         const numTotal = this.numGroups
         term = term.replace('[amount]', numTemp < numTotal ? `<strong>${numTemp}</strong>` : `<strong>${numTotal}</strong>`)
         term = term.replace('[total]', `<strong>${numTotal}</strong>`)
@@ -143,7 +147,9 @@
             [this.term('institute')]: group.institute,
             [this.term('canton')]: group.canton,
             [this.term('website')]: group.website,
-            [this.term('topic')]: group.topics.map(topic => topic.name).join(', ')
+            [this.term('topic')]: group.topics.map(topic => topic.name).join(', '),
+            Latitude: group.coords.lat,
+            Longitude: group.coords.lng
           }
           table.push(row)
         }
