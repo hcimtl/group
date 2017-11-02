@@ -1,4 +1,5 @@
 {
+  "title": "Forschungsgruppen Umwelt Schweiz",
   "research_group": "Forschungsgruppe",
   "topic": "Forschungsthemen",
   "institution": "Institution",
@@ -10,7 +11,8 @@
   "group": "Gruppe",
   "sort_by": "Sortieren nach",
   "export": "Ergebnisse Exportieren",
-  "show_more": "Zeige [amount] von [total] Gruppen",
+  "show_more": "Mehr Anzeigen",
+  "show_more_hint": "[amount] von [total] Gruppen",
   "no_results": "Keine Ergebnisse gefunden.",
   "export_name": "forschungsgruppen_umwelt",
   "source_message": "Die vorliegende Liste von Forschungsgruppen basiert auf Benutzer-definierten Abfragen aus der Umweltforschung-Datenbank des schweizerischen Bundesamts für Umwelt BAFU. Geben Sie bei jeglicher Benutzung dieser Daten das schweizerische Bundesamts für Umwelt als Quelle an."
