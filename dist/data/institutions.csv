@@ -5,11 +5,8 @@
 4,"Bundesamt für Bevölkerungsschutz","BABS"
 5,"Business School Lausanne","BSL"
 6,"Center for Agricultural Bioscience International","CABI"
-7,"Centre de coordination pour la protection des amphibiens et des reptiles de Suisse","KARCH"
 8,"Centre de recherche sur l'environnement alpin","CREALP"
-9,"Centre du réseau suisse de floristique","CRSF"
 10,"Centre hospitalier universitaire vaudois","CHUV"
-11,"Centre suisse de cartographie de la faune","CSCF"
 12,"Conservatoire et Jardin botaniques Genève","CJBG"
 13,"Eidgenössische Anstalt für Wasserversorgung, Abwasserreinigung und Gewässerschutz","EAWAG"
 14,"Ecole Polytechnique Fédérale de Lausanne","EPFL"
@@ -42,11 +39,10 @@
 42,"Naturhistorisches Museum Bern","NMBE"
 43,"Natur-Museum Luzern",
 44,"Schweizerisches Zentrum für angewandte Ökotoxikologie","Oekotoxzentrum"
-45,"Ökozentrum",
+45,"Ökozentrum Langenbruck",
 46,"Pädagogische Hochschule St. Gallen","PHSG"
 48,"Pädagogische Hochschule Zürich","PHZH"
 49,"Paul Scherrer Institut","PSI"
-50,"Schweizerische Vogelwarte Sempach",
 51,"Schweizerisches Forschungsinstitut für Hochgebirgsklima und Medizin Davos","SFI"
 52,"Schweizerisches Tropen- und Public Health Institut","Swiss TPH"
 53,"Scuola universitaria professionale della Svizzera italiana","SUPSI"
@@ -65,3 +61,4 @@
 66,"Université de Neuchâtel","UNINE"
 68,"Eidgenössische Forschungsanstalt für Wald, Schnee und Landschaft","WSL"
 69,"Zürcher Hochschule für Angewandte Wissenschaften","ZHAW"
+70,"Schweizerisches Informationszentrum für Arten","INFOSPECIES"
