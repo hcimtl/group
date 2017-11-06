@@ -74,11 +74,18 @@
     mounted: function(){
       this.$store.dispatch('loadLanguage')
       this.$store.dispatch('loadHash')
-      this.$store.dispatch('loadGroups')
-      this.$store.dispatch('loadTopics')
-      this.$store.dispatch('loadHeads')
-      this.$store.dispatch('loadInstitutions')
-      this.$store.dispatch('loadCantons')
+
+      const tload = this.$store.dispatch('loadTopics')
+      const hload = this.$store.dispatch('loadHeads')
+      const iload = this.$store.dispatch('loadInstitutions')
+      const cload = this.$store.dispatch('loadCantons')
+
+      Promise.all([tload, hload, iload, cload]).then(values => {
+        this.$store.dispatch('loadGroups')
+      }).catch(err => {
+        console.log(err)
+      })
+
 
       const self = this
       const domain = document.domain.match(/[a-z0-9\-]*.[a-z0-9\-]+$/i)[0]
