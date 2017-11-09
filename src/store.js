@@ -252,7 +252,6 @@ export const store = new Vuex.Store({
             })
             commit('setData', { list: 'topic', data: topicArray })
             localStorage.setItem('topicArray', JSON.stringify(topicArray))
-            localStorage.setItem('dbDate', Date.now())
             resolve()
           }, (err) => {
             reject(err)
@@ -279,7 +278,6 @@ export const store = new Vuex.Store({
             })
             commit('setData', { list: 'canton', data: cantonArray })
             localStorage.setItem('cantonArray', JSON.stringify(cantonArray))
-            localStorage.setItem('dbDate', Date.now())
             resolve()
           }, (err) => {
             reject(err)
@@ -306,7 +304,6 @@ export const store = new Vuex.Store({
 
             commit('setData', { list: 'head', data: headArray })
             localStorage.setItem('headArray', JSON.stringify(headArray))
-            localStorage.setItem('dbDate', Date.now())
             resolve()
           }, (err) => {
             reject(err)
@@ -333,7 +330,6 @@ export const store = new Vuex.Store({
             })
             commit('setData', { list: 'institution', data: institutionArray })
             localStorage.setItem('institutionArray', JSON.stringify(institutionArray))
-            localStorage.setItem('dbDate', Date.now())
             resolve()
           }, (err) => {
             reject(err)
