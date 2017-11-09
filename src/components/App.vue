@@ -149,7 +149,6 @@
     position: relative;
     max-width: 900px;
     margin: auto;
-    padding: 20px;
   }
   .filter-container {
     position: relative;
