@@ -15,4 +15,4 @@ npm run dev
 npm run build
 ```
 
-Die Daten in `/src/data/` sind nicht aktuell, da Datenbankanpassungen nicht in GitHub gemacht werden.m
+Die Daten in `/src/data/` sind nicht aktuell, da Datenbankanpassungen nicht in GitHub gemacht werden.
