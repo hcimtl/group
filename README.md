@@ -1,5 +1,7 @@
 # Schweizerische Forschungsgruppen im Umweltbereich
-> [www.bafu.admin.ch/forschungsgruppen](https://www.bafu.admin.ch/forschungsgruppen)
+
+
+[![www.bafu.admin/forschungsgruppen](/screenshot-1.jpg?raw=true)](https://www.bafu.admin.ch/forschungsgruppen)
 
 > Mehr als 1000 Forschungsgruppen sind aktiv in der Umweltforschung in der Schweiz. Das BAFU hat eine Datenbank erstellt, in der diese Forschungsgruppen erfasst sind.
 
