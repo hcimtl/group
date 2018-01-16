@@ -14,3 +14,5 @@ npm run dev
 # build for production with minification
 npm run build
 ```
+
+Die Daten in `/src/data/` sind nicht aktuell, da Datenbankanpassungen nicht in GitHub gemacht werden.m
