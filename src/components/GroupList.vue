@@ -1,14 +1,11 @@
 <template>
   <div class="list-container">
-    <div class="ui segment basic vertical right aligned">
-      <button @click="exportData" class="ui icon left floated mini compact labeled button small-padding">
-        <i class="icon download"></i>{{ term('export') }} (CSV)
-      </button>
+    <!-- <div class="ui segment basic vertical right aligned">
       <div class="ui label">
         <i class="icon users"></i> {{ numGroups }}
       </div>
-    </div>
-    <div class="ui vertical segment clearing right aligned small-padding">
+    </div> -->
+    <div class="ui vertical segment clearing left aligned small-padding">
       <span>{{ term('sort_by') }} </span>
       <div class="ui inline dropdown" @focus="setActive()" @blur="setInactive()" @keydown="sortKeyNav($event)" tabindex="0">
         <div class="text" @click="setActive()">{{ term(sortOptions[sortIndex].label) }}</div>
@@ -176,7 +173,9 @@
     .ui.button.thin {
       font-weight: normal;
     }
-
+    .bold {
+      font-weight: bold;
+    }
     .ui.labels {
       .label {
         font-weight: normal;

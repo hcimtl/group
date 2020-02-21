@@ -1,5 +1,5 @@
 <template>
-  <div class="eight wide field">
+  <div class="five wide field">
     <label>
       <i :class="[icon, 'icon']"></i> <span>{{ title }}</span>
       <i v-if="label === 'topic'" class="question circle link primary icon" style="color: #069; vertical-align: super; line-height: 0;" @click="openTopicHelp"></i>
