@@ -49,10 +49,11 @@
           zoomSnap: 0.5
         });
 
-        const url = 'https://wmts10.geo.admin.ch/1.0.0/ch.swisstopo.pixelkarte-farbe/default/current/3857/{z}/{x}/{y}.jpeg';
-        const tilelayer = new L.tileLayer(url, {
-          attribution: '<a href="https://www.swisstopo.admin.ch/de/home.html" target="_blank"> swisstopo</a>'
+      const tilelayer = new L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+	      maxZoom: 19,
+	      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         });
+      
         this.map.addLayer(tilelayer);
 
         this.map.fitBounds(this.maxBounds)
