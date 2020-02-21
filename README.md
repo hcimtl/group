@@ -17,4 +17,9 @@ npm run dev
 npm run build
 ```
 
-Forked from: https://github.com/thomome/research-group-visualization
+Forked from [Environmental research groups in Switzerland](https://github.com/thomome/research-group-visualization)
+
+# Authors
+
+* [Thomas Guthruf](https://github.com/thomome): original [Environmental research groups in Switzerland](https://github.com/thomome/research-group-visualization) information visualization
+* [Christian Frisson](https://frisson.re): [HCI MTL Group](https://github.com/hcimtl/group) information visualization fork
