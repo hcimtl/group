@@ -1,0 +1,18 @@
+{
+  "title": "HCI Group Montreal",
+  "research_group": "Research group",
+  "topic": "Research Topics",
+  "institution": "Affiliation",
+  "member": "Member",
+  "website": "Website",
+  "group": "Group",
+  "map": "Map",
+  "sort_by": "List by",
+  "lang": "Info",
+  "export": "Export results",
+  "show_more": "Show More",
+  "show_more_hint": "[amount] of [total] groups",
+  "no_results": "No results found.",
+  "export_name": "hci-mtl-group",
+  "source_message": "Please mention the HCI Montreal Group for any use of these data."
+}

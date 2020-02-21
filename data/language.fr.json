@@ -1,0 +1,18 @@
+{
+  "title": "Groupe IHM Montréal",
+  "research_group": "Groupe de recherche",
+  "topic": "Thèmes de recherche",
+  "institution": "Affiliation",
+  "member": "Membre",
+  "website": "Site web",
+  "group": "Groupe",
+  "map": "Carte",
+  "sort_by": "Liste par",
+  "lang": "Info",
+  "export": "Export des résultats",
+  "show_more": "Plus",
+  "show_more_hint": "[amount] de [total] groupes",
+  "no_results": "Aucun résultat trouvé.",
+  "export_name": "hci-mtl-group",
+  "source_message": "Veuillez s'il vous plaît mentionner le Groupe IHM MTL pour toute utilisation de ces données."
+}

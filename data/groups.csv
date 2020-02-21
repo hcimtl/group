@@ -1,0 +1,5 @@
+"id","institutionIds","name","short","website","street","zip","city","lat","lng","topicIds","mainTopicId"
+1,"2,1","Input Devices and Music Interaction Laboratory","IDMIL","http://idmil.org","550 Rue Sherbrooke Ouest, Suite 500","H3A 1E3","Montreal","45.505985","-73.572378","1,4,9","9"
+2,"4,3","Laboratoire de recherche en multimédia","","http://www.etsmtl.ca/Unites-de-recherche/Labmultimedia/","1100 Notre-Dame Ouest","H3C 1K3","Montréal","45.495206","-73.562812","1,5,3","1"
+3,"5,1","Department of Electrical & Computer Engineering","ECE","https://www.mcgill.ca/ece/","McConnell Engineering Building, 3480 University Street","H3A 0E9","Montreal","45.506109","-73.576398","6,7,8","6"
+4,"6,1","Mila","","https://mila.quebec","6666 St-Urbain, #200","H2S 3H1","Montreal","45.530768","-73.613593","6","6"

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <!-- <link rel="shortcut icon" href="https://www.bafu.admin.ch/etc/designs/core/frontend/guidelines/img/ico/favicon.ico"> -->
+    <title>Research topics</title>
+
+    <!-- <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet"> -->
+    <style>
+      body {
+        font-family: 'Lato';
+      }
+      .topic-list {
+        padding: 10px;
+        margin: 0;
+        column-count: 4;
+        column-width: 300px;
+        list-style: none;
+      }
+      .topic-list li {
+        display: flex;
+        padding-bottom: 0.2em;
+        -webkit-column-break-inside: avoid;
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+      .topic-list li .id {
+        flex: 0 0 28px;
+        display: block;
+        color: #777;
+        width: 28px;
+        padding-right: 7px;
+        padding-top: 0.06em;
+        text-align: right;
+        font-size: 0.8em;
+      }
+      .topic-list li .keyword {
+        display: block;
+        line-height: 1em;
+      }
+    </style>
+  </head>
+  <body>
+    <ul class="topic-list"></ul>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/4.3.6/papaparse.min.js"></script>
+    <script type="text/javascript">
+      var lang = window.location.hash.replace('#', '');
+      if(['fr', 'en'].indexOf(lang) === -1){
+        lang = 'en'
+      }
+
+      var topicArray = localStorage.getItem('topicArray');
+      if(topicArray){
+        topicArray = JSON.parse(topicArray);
+        displayTopics();
+      } else {
+        loadCSV(function(data){
+          var parsedCSV = Papa.parse(data, { header: true, skipEmptyLines: true });
+          topicArray = parsedCSV.data
+          displayTopics()
+        });
+      }
+
+      function loadCSV(success){
+        var xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+        xhr.open('GET', './data/topics.csv');
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState>3 && xhr.status==200) success(xhr.responseText);
+        };
+        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        xhr.send();
+        return xhr;
+      }
+
+      function displayTopics(){
+        var topicLength = topicArray.length;
+        for(var i = 0; i < topicLength; i++){
+          var item = document.createElement('li');
+          item.innerHTML = '<span class="id">' + topicArray[i].id + '</span> <span class="keyword">' + topicArray[i][lang] + '</span>';
+          document.querySelector('.topic-list').appendChild(item);
+        }
+      }
+    </script>
+  </body>
+</html>
