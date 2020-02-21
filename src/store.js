@@ -15,8 +15,7 @@ export const store = new Vuex.Store({
     },
     topic: { list: [], data: {}, selected: [], available: [] },
     institution: { list: [], data: {}, selected: [], available: [] },
-    canton: { list: [], data: {}, selected: [], available: [] },
-    head: { list: [], data: {}, selected: [], available: [] },
+    member: { list: [], data: {}, selected: [], available: [] },
     group: { list: [], data: {}, selected: [] },
     bounds: {
       ne: [47.933243004813725, 10.575639903386495],
@@ -65,21 +64,17 @@ export const store = new Vuex.Store({
     institutions({institution}){
       return institution.available.map(id => institution.data[id])
     },
-    cantons({canton}){
-      return canton.available.map(id => canton.data[id])
-    },
-    heads({head}){
-      return head.available.map(id => head.data[id])
+    members({member}){
+      return member.available.map(id => member.data[id])
     },
 
     groupById(state, getters){
       return (id) => {
         const group = state.group.data[id]
 
-        group.canton = state.canton.data[group.cantonId].name
-        group.institution = state.institution.data[group.institutionId].name
+        group.institutions = group.institutionIds.map(institution_id => state.institution.data[institution_id])
         group.topics = group.topicIds.map(topic_id => state.topic.data[topic_id])
-        group.heads = group.headIds.map(head_id => state.head.data[head_id])
+        group.members = group.memberIds.map(member_id => state.member.data[member_id])
 
         return group
       }
@@ -93,39 +88,35 @@ export const store = new Vuex.Store({
 
     groups(state, getters) {
       const allG = getters.allGroups
-      const slcC = state.canton.selected
       const slcI = state.institution.selected
-      const slcH = state.head.selected
+      const slcH = state.member.selected
       const slcT = state.topic.selected
 
       let groups = []
       const tempC = {}
-      let cantons = []
       const tempI = {}
       let institutions = []
       const tempH = {}
-      let heads = []
+      let members = []
       const tempT = {}
       let topics = []
 
 
-      if(slcC.length === 0 && slcI.length === 0 && slcH.length === 0 && slcT.length === 0){
+      if(slcI.length === 0 && slcH.length === 0 && slcT.length === 0){
 
         groups = allG
-        cantons = state.canton.list
         institutions = state.institution.list
-        heads = state.head.list
+        members = state.member.list
         topics = state.topic.list
 
       } else {
 
         allG.forEach((v) => {
-          const checkCanton = (slcC.length === 0 || slcC.indexOf(v.cantonId) != -1)
-          const checkInstitution = (slcI.length === 0 || slcI.indexOf(v.institutionId) != -1)
-          const checkHead = (slcH.length === 0 || intersect(slcH, v.headIds).length > 0)
+          const checkInstitution = (slcI.length === 0 || intersect(slcI, v.institutionIds).length > 0)
+          const checkMember = (slcH.length === 0 || intersect(slcH, v.memberIds).length > 0)
           const checkTopic = (slcT.length === 0 || intersect(slcT, v.topicIds).length >= slcT.length)
 
-          if(checkCanton && checkInstitution && checkHead && checkTopic){
+          if(checkInstitution && checkMember && checkTopic){
             groups.push(v)
 
             v.topicIds.forEach(id => {
@@ -136,25 +127,20 @@ export const store = new Vuex.Store({
             })
           }
 
-          if(checkInstitution && checkHead && checkTopic){
-            if(!tempC[v.cantonId]){
-              tempC[v.cantonId] = true
-              cantons.push(v.cantonId)
+          if(checkInstitution && checkMember && checkTopic){
+            v.institutionIds.forEach((institutionId) => {
+            if(!tempI[institutionId]){
+              tempI[institutionId] = true
+              institutions.push(institutionId)
             }
+            })
           }
 
-          if(checkCanton && checkHead && checkTopic){
-            if(!tempI[v.institutionId]){
-              tempI[v.institutionId] = true
-              institutions.push(v.institutionId)
-            }
-          }
-
-          if(checkCanton && checkInstitution && checkTopic){
-            v.headIds.forEach(id => {
+          if(checkInstitution && checkTopic){
+            v.memberIds.forEach(id => {
               if(!tempH[id]){
                 tempH[id] = true
-                heads.push(id)
+                members.push(id)
               }
             })
           }
@@ -162,8 +148,7 @@ export const store = new Vuex.Store({
       }
 
       Vue.set(state.institution, 'available', institutions)
-      Vue.set(state.canton, 'available', cantons)
-      Vue.set(state.head, 'available', heads)
+      Vue.set(state.member, 'available', members)
       Vue.set(state.topic, 'available', topics)
 
       return groups
@@ -206,11 +191,7 @@ export const store = new Vuex.Store({
               return {
                 id: parseInt(group.id),
                 name: group.name.trim(),
-                headIds: group.headIds ? group.headIds.toString().split(',').map(id => parseInt(id)) : [],
-                institutionId: parseInt(group.institutionId),
-                department: group.department.trim(),
-                institute: group.institute.trim(),
-                cantonId: parseInt(group.cantonId),
+                institutionIds: group.institutionIds ? group.institutionIds.toString().split(',').map(id => parseInt(id)) : [],
                 street: group.street.trim(),
                 city: group.city,
                 zip: group.zip,
@@ -285,25 +266,29 @@ export const store = new Vuex.Store({
         }
       })
     },
-    loadHeads({ commit, state }){
+    loadMembers({ commit, state }){
       return new Promise((resolve, reject) => {
         const dbDate = localStorage.getItem('dbDate')
-        const dbHeadArray = localStorage.getItem('headArray')
-        if((Date.now() - dbDate) < state.cacheDuration && dbHeadArray){
-          commit('setData', { list: 'head', data: JSON.parse(dbHeadArray) })
+        const dbMemberArray = localStorage.getItem('memberArray')
+        if((Date.now() - dbDate) < state.cacheDuration && dbMemberArray){
+          commit('setData', { list: 'member', data: JSON.parse(dbMemberArray) })
           resolve()
         } else {
           ajax('./data/persons.csv', (data) => {
             const parsedCSV = Papa.parse(data, { header: true, skipEmptyLines: true })
-            const headArray = parsedCSV.data.map(head => {
+            const memberArray = parsedCSV.data.map(member => {
               return {
-                id: parseInt(head.id),
-                name: head.name.trim()
+                id: parseInt(member.id),
+                name: member.name.trim(),
+                website: member.website.trim(),
+                mainTopicId: parseInt(member.mainTopicId),
+                topicIds: member.topicIds ? member.topicIds.toString().split(',').map(id => parseInt(id)) : [],
+                affiliations: member.affiliations ?  JSON.parse(member.affiliations) : []
               }
             })
 
-            commit('setData', { list: 'head', data: headArray })
-            localStorage.setItem('headArray', JSON.stringify(headArray))
+            commit('setData', { list: 'member', data: memberArray })
+            localStorage.setItem('memberArray', JSON.stringify(memberArray))
             resolve()
           }, (err) => {
             reject(err)
@@ -341,8 +326,7 @@ export const store = new Vuex.Store({
       const params = getHashParams()
       let topics = []
       let institutions = []
-      let cantons = []
-      let heads = []
+      let members = []
 
       if(params.lang && params.lang != state.language.selected){
         commit('setLanguage', { data: params.lang })
@@ -350,14 +334,12 @@ export const store = new Vuex.Store({
 
       if(params.topic) topics = params.topic.split(',').map(id => parseInt(id))
       if(params.institution) institutions = params.institution.split(',').map(id => parseInt(id))
-      if(params.canton) cantons = params.canton.split(',').map(id => parseInt(id))
-      if(params.head) heads = params.head.split(',').map(id => parseInt(id))
+      if(params.member) members = params.member.split(',').map(id => parseInt(id))
 
 
       if(state.topic.selected.toString() != topics.toString()) commit('setSelected', { list: 'topic', data: topics })
       if(state.institution.selected.toString() != institutions.toString()) commit('setSelected', { list: 'institution', data: institutions })
-      if(state.canton.selected.toString() != cantons.toString()) commit('setSelected', { list: 'canton', data: cantons })
-      if(state.head.selected.toString() != heads.toString()) commit('setSelected', { list: 'head', data: heads })
+      if(state.member.selected.toString() != members.toString()) commit('setSelected', { list: 'member', data: members })
     }
   }
 })

@@ -9,13 +9,16 @@
               <group-filter :data="this.$store.getters.topics" label="topic" icon="tags"></group-filter>
               <group-filter :data="this.$store.getters.institutions" label="institution" icon="home"></group-filter>
             </div>
-            <transition name="slide">
-              <div class="two fields" v-show="extended || forceExtended">
-                <group-filter :data="this.$store.getters.cantons" label="canton" icon="marker"></group-filter>
-                <group-filter :data="this.$store.getters.heads" label="head" icon="user"></group-filter>
+                  <i class="dropdown icon"></i>
               </div>
-            </transition>
           </div>
+              <group-filter :data="this.$store.getters.topics" label="topic" icon="tags"></group-filter>
+              <group-filter
+                :data="this.$store.getters.institutions"
+                label="institution"
+                icon="home"
+              ></group-filter>
+              <group-filter :data="this.$store.getters.members" label="member" icon="user"></group-filter>
           <div class="field">
             <label class="label-without-content"></label>
             <button type="button" :class="[!extended ? 'basic' : 'basic black', 'ui fluid button icon']" @click="toggleExtendedFilter">
@@ -53,8 +56,7 @@
       }
     },
     computed: {
-      forceExtended(){
-        return this.$store.state.canton.selected.length > 0 || this.$store.state.head.selected.length > 0
+      return this.$store.state.member.selected.length > 0;
       }
     },
     methods: {
@@ -75,10 +77,8 @@
       this.$store.dispatch('loadLanguage')
       this.$store.dispatch('loadHash')
 
-      const tload = this.$store.dispatch('loadTopics')
-      const hload = this.$store.dispatch('loadHeads')
-      const iload = this.$store.dispatch('loadInstitutions')
-      const cload = this.$store.dispatch('loadCantons')
+    const hload = this.$store.dispatch("loadMembers");
+    const iload = this.$store.dispatch("loadInstitutions");
 
       Promise.all([tload, hload, iload, cload]).then(values => {
         this.$store.dispatch('loadGroups')

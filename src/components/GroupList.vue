@@ -68,10 +68,6 @@
           {
             label: 'institution',
             sort_key: 'institution',
-          },
-          {
-            label: 'head',
-            sort_key: { type: 'array', key: ['heads', 0, 'name']},
           }
         ],
         amountToShow: 15,
@@ -141,11 +137,8 @@
           const group = this.groups[i]
           const row = {
             [this.term('research_group')]: group.name,
-            [this.term('head')]: group.heads.map(head => head.name).join(', '),
-            [this.term('institution')]: group.institution,
-            [this.term('department')]: group.department,
-            [this.term('institute')]: group.institute,
-            [this.term('canton')]: group.canton,
+            [this.term('member')]: group.members.map(member => member.name).join(', '),
+            [this.term('institution')]: group.institutions.map(institution => institution.name).join(', '),
             [this.term('website')]: group.website,
             [this.term('topic')]: group.topics.map(topic => topic.name).join(', '),
             Latitude: group.coords.lat,
