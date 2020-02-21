@@ -190,11 +190,27 @@ export const store = new Vuex.Store({
           resolve()
         } else {
           ajax('./data/groups.csv', (data) => {
+
+            let groupsMemberIds = []
+            let groupTopicIds = [];
+            state.member.list.forEach((m) => {
+              state.member.data[m].affiliations.forEach((a) => {
+                if(groupsMemberIds[a[0]] === undefined ) groupsMemberIds[a[0]] = [];
+                groupsMemberIds[a[0]].push(m);
+                if(groupTopicIds[a[0]] === undefined ) groupTopicIds[a[0]] = [1];
+                state.member.data[m].topicIds.forEach((t) => {
+                  if(groupTopicIds[a[0]].indexOf(t) === -1) groupTopicIds[a[0]].push(t);
+                })
+              })
+            })
+
             const parsedCSV = Papa.parse(data, { header: true, skipEmptyLines: true })
             const groupArray = parsedCSV.data.map(group => {
               return {
                 id: parseInt(group.id),
                 name: group.name.trim(),
+                // memberIds: group.memberIds ? group.memberIds.toString().split(',').map(id => parseInt(id)) : [],
+                memberIds: groupsMemberIds[parseInt(group.id)],
                 institutionIds: group.institutionIds ? group.institutionIds.toString().split(',').map(id => parseInt(id)) : [],
                 street: group.street.trim(),
                 city: group.city,
@@ -202,7 +218,8 @@ export const store = new Vuex.Store({
                 website: group.website.trim(),
                 mainTopicId: parseInt(group.mainTopicId),
                 coords: { lat: parseFloat(group.lat), lng: parseFloat(group.lng) },
-                topicIds: group.topicIds ? group.topicIds.toString().split(',').map(id => parseInt(id)) : []
+                //topicIds: group.topicIds ? group.topicIds.toString().split(',').map(id => parseInt(id)) : []
+                topicIds: groupTopicIds[parseInt(group.id)] ? groupTopicIds[parseInt(group.id)] : ( group.topicIds ? group.topicIds.toString().split(',').map(id => parseInt(id)) : [] )
               }
             })
             commit('setData', { list: 'group', data: groupArray })
