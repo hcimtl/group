@@ -17,9 +17,7 @@ import './data/topics.csv'
 import './data/persons.csv'
 import './data/institutions.csv'
 
-import './data/language.de.json'
 import './data/language.fr.json'
-import './data/language.it.json'
 import './data/language.en.json'
 
 Vue.mixin({

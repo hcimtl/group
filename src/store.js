@@ -224,9 +224,7 @@ export const store = new Vuex.Store({
             const topicArray = parsedCSV.data.map(topic => {
               return {
                 id: parseInt(topic.id),
-                de: topic.de.trim(),
                 fr: topic.fr.trim(),
-                it: topic.it.trim(),
                 en: topic.en.trim(),
                 main: !!parseInt(topic.main)
               }
