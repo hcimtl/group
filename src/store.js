@@ -10,7 +10,7 @@ Vue.use(Vuex)
 export const store = new Vuex.Store({
   state: {
     language: {
-      selected: 'de',
+      selected: 'en',
       terms: {}
     },
     topic: { list: [], data: {}, selected: [], available: [] },
