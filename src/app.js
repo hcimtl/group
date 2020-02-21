@@ -14,6 +14,7 @@ import './theme/semantic.less'
 
 import './data/groups.csv'
 import './data/topics.csv'
+import './data/roles.csv'
 import './data/persons.csv'
 import './data/institutions.csv'
 

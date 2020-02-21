@@ -14,6 +14,7 @@ export const store = new Vuex.Store({
       terms: {}
     },
     topic: { list: [], data: {}, selected: [], available: [] },
+    role: { list: [], data: {}, selected: [], available: [] },
     institution: { list: [], data: {}, selected: [], available: [] },
     member: { list: [], data: {}, selected: [], available: [] },
     group: { list: [], data: {}, selected: [] },
@@ -60,6 +61,9 @@ export const store = new Vuex.Store({
         topic.name = topic[state.language.selected]
         return topic
       })
+    },
+    roles(state){
+      return state.role.list.map(id => state.role.data[id]);
     },
     institutions({institution}){
       return institution.available.map(id => institution.data[id])
@@ -238,25 +242,25 @@ export const store = new Vuex.Store({
         }
       })
     },
-    loadCantons({ commit, state }){
+    loadRoles({ commit, state }){
       return new Promise((resolve, reject) => {
         const dbDate = localStorage.getItem('dbDate')
-        const dbCantonArray = localStorage.getItem('cantonArray')
-        if((Date.now() - dbDate) < state.cacheDuration && dbCantonArray){
-          commit('setData', { list: 'canton', data: JSON.parse(dbCantonArray) })
+        const dbRoleArray = localStorage.getItem('roleArray')
+        if((Date.now() - dbDate) < state.cacheDuration && dbRoleArray){
+          commit('setData', { list: 'role', data: JSON.parse(dbRoleArray) })
           resolve()
         } else {
-          ajax('./data/cantons.csv', (data) => {
+          ajax('./data/roles.csv', (data) => {
             const parsedCSV = Papa.parse(data, { header: true, skipEmptyLines: true })
-            const cantonArray = parsedCSV.data.map(canton => {
+            const roleArray = parsedCSV.data.map(role => {
               return {
-                id: parseInt(canton.id),
-                name: canton.name.trim(),
-                short: canton.short.trim()
+                id: parseInt(role.id),
+                fr: role.fr.trim(),
+                en: role.en.trim()
               }
             })
-            commit('setData', { list: 'canton', data: cantonArray })
-            localStorage.setItem('cantonArray', JSON.stringify(cantonArray))
+            commit('setData', { list: 'role', data: roleArray })
+            localStorage.setItem('roleArray', JSON.stringify(roleArray))
             resolve()
           }, (err) => {
             reject(err)
@@ -323,6 +327,7 @@ export const store = new Vuex.Store({
     loadHash({ commit, state }){
       const params = getHashParams()
       let topics = []
+      let roles = []
       let institutions = []
       let members = []
 
@@ -331,11 +336,13 @@ export const store = new Vuex.Store({
       }
 
       if(params.topic) topics = params.topic.split(',').map(id => parseInt(id))
+      if(params.role) roles = params.role.split(',').map(id => parseInt(id))
       if(params.institution) institutions = params.institution.split(',').map(id => parseInt(id))
       if(params.member) members = params.member.split(',').map(id => parseInt(id))
 
 
       if(state.topic.selected.toString() != topics.toString()) commit('setSelected', { list: 'topic', data: topics })
+      if(state.role.selected.toString() != roles.toString()) commit('setSelected', { list: 'role', data: roles })
       if(state.institution.selected.toString() != institutions.toString()) commit('setSelected', { list: 'institution', data: institutions })
       if(state.member.selected.toString() != members.toString()) commit('setSelected', { list: 'member', data: members })
     }
