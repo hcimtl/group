@@ -329,7 +329,8 @@ export const store = new Vuex.Store({
               return {
                 id: parseInt(institution.id),
                 name: institution.name.trim(),
-                short: institution.short.trim()
+                short: institution.short.trim(),
+                website: institution.website.trim(),
               }
             })
             commit('setData', { list: 'institution', data: institutionArray })
